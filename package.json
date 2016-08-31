@@ -1,0 +1,50 @@
+{
+  "name": "brownie",
+  "version": "0.0.1",
+  "description": "A canvas toolkit in coffeescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mconintet",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "browserify": "^13.1.0",
+    "coffeeify": "^2.0.1",
+    "gulp": "^3.9.1",
+    "gulp-gzip": "^1.4.0",
+    "gulp-size": "^2.1.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
+    "gulp-util": "^3.0.7",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "browserify": "^13.1.0",
+    "coffeeify": "^2.0.1",
+    "gulp": "^3.9.1",
+    "gulp-gzip": "^1.4.0",
+    "gulp-size": "^2.1.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
+    "gulp-util": "^3.0.7",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mconintet/brownie.git"
+  },
+  "keywords": [
+    "canvas",
+    "toolkit"
+  ],
+  "bugs": {
+    "url": "https://github.com/mconintet/brownie/issues"
+  },
+  "homepage": "https://github.com/mconintet/brownie#readme"
+}

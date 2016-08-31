@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        #c {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="c" width="500" height="300"></canvas>
+<input id="range" type="range" value="0"/>
+<script src="../dist/js/brownie.min.js"></script>
+<script>
+    var c = new brownie.Canvas('#c');
+    var stage = c.newStage();
+
+    var layer1 = new brownie.Layer(50, 50, 100, 100);
+    layer1.rotate = 0;
+    layer1.borderWidth = 1;
+    stage.addLayer(layer1);
+
+    layer1.on('click', function () {
+        console.log('layer 1 clicked');
+        this.setBackgroundColor('blue');
+    });
+
+    var layer2 = new brownie.Layer(10, 10, 50, 50);
+    layer2.rotate = 0;
+    layer2.borderWidth = 1;
+    layer1.addChild(layer2);
+
+    layer2.on('click', function () {
+        console.log('layer 2 clicked');
+        this.setBackgroundColor('red');
+    });
+
+    brownie.Util.$one('#range').addEventListener('change', function () {
+        //layer1.frame.origin.x = 60;
+        //layer1.frame.origin.y = 60;
+        layer1.rotate = this.value;
+        stage.redraw();
+        console.log(this.value);
+    });
+</script>
+</body>
+</html>
