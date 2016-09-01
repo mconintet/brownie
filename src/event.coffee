@@ -28,7 +28,9 @@ module.exports.EventProducer = class EventProducer
     if listener is undefined
       @listeners[event] = []
     else
-      Util.aRemoveEqual @listeners[event], listener
+      ls = @listeners[event]
+      if Util.isArray(ls)
+        Util.aRemoveEqual ls, listener
 
     return this
 
