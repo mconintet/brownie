@@ -79,6 +79,18 @@ module.exports.Layer = class Layer
     @frame.origin.y += y
     @redraw()
 
+  moveLeft: (x = 1) ->
+    @move -x, 0
+
+  moveRight: (x = 1)->
+    @move x, 0
+
+  moveUp: (y = 1) ->
+    @move 0, -y
+
+  moveDown: (y = 1) ->
+    @move 0, y
+
   enableEditIfNeeded: ->
     if @editable isnt false
       @on 'click', @beginEdit
