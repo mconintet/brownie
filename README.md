@@ -2,14 +2,17 @@
 This is a canvas toolkit in coffeescript, it can be used to build a static image/text designer.
 
 ## Features
-- [x] support high-dpi
-- [x] support layers - only one canvas is used
-- [x] support absolute/relative position
-- [x] support z-index
-- [x] support hit test
+- [x] high-dpi
+- [x] layers - only one canvas is used
+- [x] absolute/relative position
+- [x] z-index of layer
+- [x] hit test on layer
 - [x] keyboard util
+- [ ] layer drag-drop
+- [ ] layer editor - move/rotate/delete/scale
 - [ ] image layer
-- [ ] text layer
+- [ ] double click on layer
+- [ ] editable text layer
 
 ## Licence
 
