@@ -21,6 +21,13 @@ module.exports.EventProducer = class EventProducer
 
     return this
 
+  once: (event, listener) ->
+    if typeof listener isnt 'function'
+      return this
+
+    listener.__fire_once__ = true
+    @on event, listener
+
   has: (event) ->
     return @listeners[event]?.length > 0
 
@@ -42,6 +49,15 @@ module.exports.EventProducer = class EventProducer
     if ls is undefined
       return this
 
+    once = []
+
     for listener in ls
       listener.call @context, data
+      if listener.__fire_once__ is true
+        once.push listener
+
+    once.forEach (listener) ->
+      listener.__fire_once__ = false
+      Util.aRemoveEqual ls, listener
+
     return this
