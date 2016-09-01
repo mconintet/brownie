@@ -27,7 +27,6 @@ module.exports.EventObserver = class EventObserver
     @eventProducer = new EventProducer(this)
 
     document.addEventListener 'keypress', (evt) =>
-      console.log 'test'
       evt = new Event('keypress', evt)
       evt.code = new Code(evt.data.keyCode)
       @fire 'keypress', evt
