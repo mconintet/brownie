@@ -14,7 +14,7 @@ module.exports.Canvas = class Canvas
     if not @raw
       throw new Error('deformed dom')
 
-    @ctx = @raw.getContext('2d');
+    @ctx = @raw.getContext '2d'
 
     if @constructor.isHighDPI
       @enableHighDPI()
@@ -53,7 +53,6 @@ module.exports.Canvas = class Canvas
 
   clear: ->
     @ctx.clearRect 0, 0, @raw.width, @raw.height
-    debugger;
 
   newStage: ->
     stage = new Stage(this)

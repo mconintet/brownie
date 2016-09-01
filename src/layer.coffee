@@ -40,13 +40,13 @@ module.exports.Layer = class Layer
 
     @eventProducer = new EventProducer(this)
 
-    @parent = null;
-    @children = [];
+    @parent = null
+    @children = []
 
-    @stage = null;
-    @ctx = null;
+    @stage = null
+    @ctx = null
 
-    @capturedTransform = null;
+    @capturedTransform = null
 
   _calculatePosition: ->
     if @parent isnt null
@@ -177,7 +177,7 @@ module.exports.Layer = class Layer
 
     @_calculatePosition()
 
-    @ctx.beginPath();
+    @ctx.beginPath()
 
     @ctx.rect @positionX, @positionY, @frame.size.width, @frame.size.height
     ret = @ctx.isPointInPath x, y
