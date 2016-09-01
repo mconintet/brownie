@@ -12,6 +12,8 @@ module.exports.Stage = class Stage
 
     @drawingIndexGenerator = new IndexGenerator
 
+    @currentEditingLayer = null
+
   addLayer: (layer) ->
     @layers.push layer
     @redraw()

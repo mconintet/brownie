@@ -2,6 +2,7 @@ EventProducer = require('./event').EventProducer
 Util = require('./util').Util
 Rect = require('./rect').Rect
 IndexGenerator = require('./index').IndexGenerator
+Canvas = require('./canvas').Canvas
 
 module.exports.Layer = class Layer
   @BORDER_DIRECTION:
@@ -36,7 +37,7 @@ module.exports.Layer = class Layer
     @borderSemiMinorAxes = 0
     @borderSemiMajorAxes = 0
 
-    @backgroundColor = null
+    @backgroundColor = '#fff'
 
     @eventProducer = new EventProducer(this)
 
@@ -47,6 +48,32 @@ module.exports.Layer = class Layer
     @ctx = null
 
     @capturedTransform = null
+
+    @editable = false
+    @useEditingStyle = true
+    @editing = false
+
+  _applyEditingStyle: ->
+    if @useEditingStyle
+      @redraw()
+
+  beginEdit: ->
+    if @stage.currentEditingLayer isnt null
+      @stage.currentEditingLayer.endEdit()
+    @stage.currentEditingLayer = this
+    @editing = true
+    @_applyEditingStyle()
+
+  endEdit: ->
+    @stage.currentEditingLayer = null
+    @editing = false
+    @redraw()
+
+  enableEditIfNeeded: ->
+    if @editable isnt false
+      @on 'click', @beginEdit
+    else
+      @off 'click', @beginEdit
 
   _calculatePosition: ->
     if @parent isnt null
@@ -88,13 +115,16 @@ module.exports.Layer = class Layer
 
     @ctx.rect @positionX, @positionY, @frame.size.width, @frame.size.height
 
-    if @backgroundColor isnt null
-      @ctx.fillStyle = @backgroundColor
-      @ctx.fill()
-
     if @borderWidth > 0
       @ctx.strokeStyle = @borderColor
       @ctx.stroke()
+
+    if @editing and @useEditingStyle
+      @ctx.shadowColor = "#1B93F1"
+      @ctx.shadowBlur = 20 * Canvas.devicePixelRatio
+
+    @ctx.fillStyle = @backgroundColor
+    @ctx.fill()
 
     @ctx.closePath()
 
@@ -105,6 +135,7 @@ module.exports.Layer = class Layer
       return this
 
     @drawingIndex = @stage.drawingIndexGenerator.auto()
+    @enableEditIfNeeded()
 
     @ctx.save()
 
