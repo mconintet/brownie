@@ -69,6 +69,16 @@ module.exports.Layer = class Layer
     @editing = false
     @redraw()
 
+  moveTo: (x, y) ->
+    @frame.origin.x = x
+    @frame.origin.y = y
+    @redraw()
+
+  move: (x, y) ->
+    @frame.origin.x += x
+    @frame.origin.y += y
+    @redraw()
+
   enableEditIfNeeded: ->
     if @editable isnt false
       @on 'click', @beginEdit
@@ -219,6 +229,10 @@ module.exports.Layer = class Layer
 
   on: (event, listener) ->
     @eventProducer.on event, listener
+    return this
+
+  once: (event, listener) ->
+    @eventProducer.once event, listener
     return this
 
   off: (event, listener) ->
