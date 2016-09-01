@@ -1,5 +1,5 @@
 Util = require('./util').Util
-IDGenerator = require('./id').IDGenerator
+IndexGenerator = require('./index').IndexGenerator
 
 module.exports.Stage = class Stage
   constructor: (@canvas) ->
@@ -10,7 +10,7 @@ module.exports.Stage = class Stage
 
     @layers = []
 
-    @idGenerator = new IDGenerator
+    @drawingIndexGenerator = new IndexGenerator
 
   addLayer: (layer) ->
     @layers.push layer
@@ -60,7 +60,7 @@ module.exports.Stage = class Stage
         fulfilled.push layer
 
     fulfilled.sort (a, b) ->
-      return b.id - a.id
+      return b.drawingIndex - a.drawingIndex
 
     fulfilled.every (layer) ->
       listeners = layer.listenersOf evt.name
@@ -78,6 +78,6 @@ module.exports.Stage = class Stage
   redraw: ->
     @canvas.clear()
     @canvas.currentStage = this
-    @idGenerator.reset()
+    @drawingIndexGenerator.reset()
     @_draw()
     return this

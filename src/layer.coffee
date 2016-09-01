@@ -1,6 +1,7 @@
 EventProducer = require('./event').EventProducer
 Util = require('./util').Util
 Rect = require('./rect').Rect
+IndexGenerator = require('./index').IndexGenerator
 
 module.exports.Layer = class Layer
   @BORDER_DIRECTION:
@@ -10,8 +11,13 @@ module.exports.Layer = class Layer
     LEFT: 1 << 3
     ALL: 0b1111
 
+  @indexGenerator: new IndexGenerator
+
   constructor: (x, y, width, height) ->
-    @id = -1
+    @id = @constructor.indexGenerator.auto()
+    @drawingIndex = -1
+
+    @zIndex = 0
 
     @positionX = 0
     @positionY = 0
@@ -93,7 +99,7 @@ module.exports.Layer = class Layer
     if @ctx is null
       return this
 
-    @id = @stage.idGenerator.id()
+    @drawingIndex = @stage.drawingIndexGenerator.auto()
 
     @ctx.save()
 

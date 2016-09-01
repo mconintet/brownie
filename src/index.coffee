@@ -1,7 +1,7 @@
-module.exports.IDGenerator = class IDGenerator
+module.exports.IndexGenerator = class IndexGenerator
   constructor: (@seed = 0) ->
 
-  id: ->
+  auto: ->
     return @seed++
 
   reset: (@seed = 0) ->
