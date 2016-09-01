@@ -11,3 +11,4 @@ window.brownie =
   Canvas: require('./canvas').Canvas
   Rect: require('./rect').Rect
   Layer: require('./layer').Layer
+  keyboard: require('./keyboard')
