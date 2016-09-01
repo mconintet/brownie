@@ -58,6 +58,19 @@
         console.log(stage.currentEditingLayer);
     });
 
+    brownie.keyboard.eventObserver.on('arrow', function (evt) {
+        if (stage.currentEditingLayer)
+            if (evt.code.isUp()) {
+                stage.currentEditingLayer.move(0, -1);
+            } else if (evt.code.isRight()) {
+                stage.currentEditingLayer.move(1, 0);
+            } else if (evt.code.isBottom()) {
+                stage.currentEditingLayer.move(0, 1);
+            } else if (evt.code.isLeft()) {
+                stage.currentEditingLayer.move(-1, 0);
+            }
+    });
+
     brownie.Util.$one('#range').addEventListener('change', function () {
         //layer1.frame.origin.x = 60;
         //layer1.frame.origin.y = 60;
