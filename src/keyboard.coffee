@@ -3,7 +3,7 @@ Event = require('./event').Event
 
 module.exports.Code = class Code
   @UP: 38
-  @RIGHT 39
+  @RIGHT: 39
   @BOTTOM: 40
   @LEFT: 37
 
@@ -27,22 +27,26 @@ module.exports.EventObserver = class EventObserver
     @eventProducer = new EventProducer(this)
 
     document.addEventListener 'keypress', (evt) =>
+      console.log 'test'
       evt = new Event('keypress', evt)
-      evt.code = new Code(evt.keyCode)
+      evt.code = new Code(evt.data.keyCode)
       @fire 'keypress', evt
 
     document.addEventListener 'keydown', (evt) =>
       evt = new Event('keydown', evt)
-      evt.code = new Code(evt.keyCode)
+      evt.code = new Code(evt.data.keyCode)
       @fire 'keydown', evt
 
     document.addEventListener 'keyup', (evt) =>
       evt = new Event('keyup', evt)
-      evt.code = new Code(evt.keyCode)
+      evt.code = new Code(evt.data.keyCode)
       @fire 'keyup', evt
 
   on: (event, listener) ->
-    @eventProducer.on event, listener
+    if event in ['arrow']
+      @on 'keydown', listener
+    else
+      @eventProducer.on event, listener
     return this
 
   once: (event, listener) ->
