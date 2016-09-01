@@ -1,7 +1,7 @@
 EventProducer = require('./event').EventProducer
 Event = require('./event').Event
 
-module.exports.Keycode = class Keycode
+module.exports.Code = class Code
   @UP: 38
   @RIGHT 39
   @BOTTOM: 40
@@ -21,24 +21,24 @@ module.exports.Keycode = class Keycode
   isLeft: ->
     @code is @constructor.LEFT
 
-module.exports.KeyboardEventObserver = class KeyboardEventObserver
+module.exports.EventObserver = class EventObserver
 
   constructor: ->
     @eventProducer = new EventProducer(this)
 
     document.addEventListener 'keypress', (evt) =>
       evt = new Event('keypress', evt)
-      evt.keycode = new Keycode(evt.keyCode)
+      evt.code = new Code(evt.keyCode)
       @fire 'keypress', evt
 
     document.addEventListener 'keydown', (evt) =>
       evt = new Event('keydown', evt)
-      evt.keycode = new Keycode(evt.keyCode)
+      evt.code = new Code(evt.keyCode)
       @fire 'keydown', evt
 
     document.addEventListener 'keyup', (evt) =>
       evt = new Event('keyup', evt)
-      evt.keycode = new Keycode(evt.keyCode)
+      evt.code = new Code(evt.keyCode)
       @fire 'keyup', evt
 
   on: (event, listener) ->
@@ -57,4 +57,4 @@ module.exports.KeyboardEventObserver = class KeyboardEventObserver
     @eventProducer.fire event, data
     return this
 
-module.exports.keyboardEventObserver = new KeyboardEventObserver
+module.exports.eventObserver = new EventObserver
