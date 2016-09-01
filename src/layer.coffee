@@ -65,8 +65,19 @@ module.exports.Layer = class Layer
       @ctx.rotate @rotate * Math.PI / 180
       @ctx.translate -tx, -ty
 
+  _applyParentTransform: ->
+    if @parent isnt null and @parent.capturedTransform isnt null
+      @ctx.setTransform @parent.capturedTransform.a,
+        @parent.capturedTransform.b,
+        @parent.capturedTransform.c,
+        @parent.capturedTransform.d,
+        @parent.capturedTransform.e,
+        @parent.capturedTransform.f
+
   _drawPredefined: ->
     @ctx.beginPath()
+
+    @_applyParentTransform()
 
     @_calculatePosition()
     @_applyRotate()
@@ -87,12 +98,6 @@ module.exports.Layer = class Layer
 
     @ctx.closePath()
 
-  _drawChildren: ->
-    for child in @children
-      child.stage = @stage
-      child.ctx = @ctx
-      child.draw()
-
   drawing: ->
 
   draw: ->
@@ -106,14 +111,17 @@ module.exports.Layer = class Layer
     @_drawPredefined()
     @drawing()
 
-    @_drawChildren()
-
     @ctx.restore()
+
     return this
 
   redraw: ->
     if @stage isnt null
       @stage.redraw()
+
+  setZIndex: (i) ->
+    @zIndex = i
+    @redraw()
 
   setRotate: (degree) ->
     @rotate = degree

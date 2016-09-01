@@ -22,6 +22,8 @@ module.exports.Canvas = class Canvas
     @eventProducer = new EventProducer(this)
 
     @currentStage = null
+
+    @disableSelect()
     @bindMouseEvent()
 
   enableHighDPI: ->
@@ -34,6 +36,12 @@ module.exports.Canvas = class Canvas
     @raw.style.height = h + 'px'
 
     @ctx.scale @constructor.devicePixelRatio, @constructor.devicePixelRatio
+
+  disableSelect: ->
+    @raw.style.webkitUserSelect = 'none'
+    @raw.style.mozUserSelect = 'none'
+    @raw.style.msUserSelect = 'none'
+    @raw.style.userSelect = 'none'
 
   bindMouseEvent: ->
     @raw.addEventListener 'click', (evt) =>

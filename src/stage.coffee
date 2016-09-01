@@ -70,10 +70,21 @@ module.exports.Stage = class Stage
       return bubbling isnt false
 
   _draw: ->
-    for layer in @layers
+    zIndexed = []
+    @walkLayers (layer) =>
       layer.stage = this
       layer.ctx = @canvas.ctx
-      layer.draw()
+      if layer.zIndex > 0
+        zIndexed.push layer
+      else
+        layer.draw()
+
+    if zIndexed.length > 0
+      zIndexed.sort (a, b) ->
+        return b.zIndex - a.zIndex
+
+      zIndexed.forEach (layer) ->
+        layer.draw()
 
   redraw: ->
     @canvas.clear()

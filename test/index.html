@@ -22,6 +22,19 @@
     var c = new brownie.Canvas('#c');
     var stage = c.newStage();
 
+    var layer3 = new brownie.Layer(30, 30, 100, 100);
+    layer3.borderWidth = 1;
+    stage.addLayer(layer3);
+    layer3.on('click', function () {
+        this.setBackgroundColor('green');
+
+        if (this.zIndex == 0) {
+            this.setZIndex(1);
+        } else {
+            this.setZIndex(0);
+        }
+    });
+
     var layer1 = new brownie.Layer(50, 50, 100, 100);
     layer1.rotate = 0;
     layer1.borderWidth = 1;
