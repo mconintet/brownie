@@ -12,12 +12,12 @@ module.exports.EventProducer = class EventProducer
     if typeof listener isnt 'function'
       return this
 
-    listeners = @listeners[event]
-    if listeners is undefined
-      listeners = @listeners[event] = []
+    ls = @listeners[event]
+    if ls is undefined
+      ls = @listeners[event] = []
 
-    if listeners.indexOf(listener) is -1
-      listeners.push(listener)
+    if ls.indexOf(listener) is -1
+      ls.push listener
 
     return this
 
@@ -28,19 +28,18 @@ module.exports.EventProducer = class EventProducer
     if listener is undefined
       @listeners[event] = []
     else
-      Util.aRemoveEqual(@listener[event], listener)
+      Util.aRemoveEqual @listeners[event], listener
 
     return this
 
   listenersOf: (event) ->
-    listeners = @listeners[event]
-    return listeners ? []
+    return @listeners[event] ? []
 
   fire: (event, data) ->
-    listeners = @listeners[event]
-    if listeners is undefined
+    ls = @listeners[event]
+    if ls is undefined
       return this
 
-    for listener in listeners
+    for listener in ls
       listener.call @context, data
     return this
