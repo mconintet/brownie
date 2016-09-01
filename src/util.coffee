@@ -8,6 +8,9 @@ module.exports.Util = class Util
   @isObject: (obj) ->
     return typeof obj is 'object' and obj isnt null
 
+  @isArray: (obj) ->
+    return Array.isArray obj
+
   @toArray: (obj) ->
     return  Array::slice.call obj
 
@@ -20,7 +23,7 @@ module.exports.Util = class Util
   @aRemoveEqual: (arr, eq) ->
     for item, i in arr
       if item is eq
-        arr.splice(i, 1)
+        arr.splice i, 1
         return
 
   @aInsertAfter: (arr, stuff, after) ->
