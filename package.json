@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "mconintet",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "devDependencies": {
     "browserify": "^13.1.0",
     "coffeeify": "^2.0.1",
