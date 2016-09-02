@@ -38,7 +38,7 @@
     var layer1 = new brownie.Layer(50, 50, 100, 100);
     layer1.rotate = 0;
     layer1.borderWidth = 1;
-    layer1.editable = true;
+    layer1.focusable = true;
     stage.addLayer(layer1);
 
     layer1.on('click', function () {
@@ -49,7 +49,8 @@
     var layer2 = new brownie.Layer(10, 10, 50, 50);
     layer2.rotate = 0;
     layer2.borderWidth = 1;
-    layer2.editable = true;
+    layer2.focusable = true;
+    layer2.dragable = true;
     layer1.addChild(layer2);
 
     layer2.on('click', function () {

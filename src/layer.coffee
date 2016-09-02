@@ -49,24 +49,23 @@ module.exports.Layer = class Layer
 
     @capturedTransform = null
 
-    @editable = false
-    @useEditingStyle = true
-    @editing = false
+    @focusable = false
+    @useDefaultFocusStyle = true
+    @focusing = false
 
-  _applyEditingStyle: ->
-    if @useEditingStyle
-      @redraw()
+    @dragable = false
 
-  beginEdit: ->
-    if @stage.currentEditingLayer isnt null
-      @stage.currentEditingLayer.endEdit()
-    @stage.currentEditingLayer = this
-    @editing = true
-    @_applyEditingStyle()
+  focus: ->
+    @stage.focusingLayer?.blur()
+    @stage.focusingLayer = this
+    @focusing = true
+    @redraw()
+    @stage.canvas.once 'mouseup', =>
+      @blur()
 
-  endEdit: ->
-    @stage.currentEditingLayer = null
-    @editing = false
+  blur: ->
+    @stage.focusingLayer = null
+    @focusing = false
     @redraw()
 
   moveTo: (x, y) ->
@@ -91,11 +90,12 @@ module.exports.Layer = class Layer
   moveDown: (y = 1) ->
     @move 0, y
 
-  enableEditIfNeeded: ->
-    if @editable isnt false
-      @on 'click', @beginEdit
+  setupFocusableIfNeeded: ->
+    if @focusable isnt false
+      @on 'mousedown', @focus
+      @on 'mouseup', @blur
     else
-      @off 'click', @beginEdit
+      @off 'mousedown', @focus
 
   _calculatePosition: ->
     if @parent isnt null
@@ -141,7 +141,7 @@ module.exports.Layer = class Layer
       @ctx.strokeStyle = @borderColor
       @ctx.stroke()
 
-    if @editing and @useEditingStyle
+    if @focusing and @useDefaultFocusStyle
       @ctx.shadowColor = "#1B93F1"
       @ctx.shadowBlur = 20 * Canvas.devicePixelRatio
 
@@ -157,7 +157,7 @@ module.exports.Layer = class Layer
       return this
 
     @drawingIndex = @stage.drawingIndexGenerator.auto()
-    @enableEditIfNeeded()
+    @setupFocusableIfNeeded()
 
     @ctx.save()
 

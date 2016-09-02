@@ -26,6 +26,8 @@ module.exports.Canvas = class Canvas
     @disableSelect()
     @bindMouseEvent()
 
+    @mousemovePrevPoint = [0, 0]
+
   enableHighDPI: ->
     w = @raw.width
     h = @raw.height
@@ -43,13 +45,42 @@ module.exports.Canvas = class Canvas
     @raw.style.msUserSelect = 'none'
     @raw.style.userSelect = 'none'
 
+  _prepareEvent: (raw, eventName) ->
+    evt = new Event(eventName, raw)
+    evt.x = raw.offsetX * @constructor.devicePixelRatio
+    evt.y = raw.offsetY * @constructor.devicePixelRatio
+    return evt
+
   bindMouseEvent: ->
+    @raw.addEventListener 'mousedown', (evt) =>
+      @mousemoveDelta = [0, 0]
+
+      evt = @_prepareEvent evt, 'mousedown'
+      if evt.x >= 0 and evt.y >= 0
+        @fire 'mousedown', evt
+
+    @raw.addEventListener 'mousemove', (evt) =>
+      [x, y] = @mousemovePrevPoint
+      x = evt.x - x
+      y = evt.y - y
+
+      @mousemovePrevPoint = [evt.x, evt.y]
+
+      if @currentStage?.focusingLayer?.dragable
+        @_moveLayer x, y
+
+    @raw.addEventListener 'mouseup', (evt) =>
+      evt = @_prepareEvent evt, 'mouseup'
+      if evt.x >= 0 and evt.y >= 0
+        @fire 'mouseup', evt
+
     @raw.addEventListener 'click', (evt) =>
-      evt = new Event('click', evt)
-      evt.x = evt.data.offsetX * @constructor.devicePixelRatio
-      evt.y = evt.data.offsetY * @constructor.devicePixelRatio
+      evt = @_prepareEvent evt, 'click'
       if evt.x >= 0 and evt.y >= 0
         @fire 'click', evt
+
+  _moveLayer: (x, y) ->
+    @currentStage.focusingLayer.move x, y
 
   clear: ->
     @ctx.clearRect 0, 0, @raw.width, @raw.height
@@ -60,6 +91,10 @@ module.exports.Canvas = class Canvas
 
   on: (event, listener) ->
     @eventProducer.on event, listener
+    return this
+
+  once: (event, listener) ->
+    @eventProducer.once event, listener
     return this
 
   off: (event, listener) ->

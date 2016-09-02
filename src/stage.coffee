@@ -12,7 +12,7 @@ module.exports.Stage = class Stage
 
     @drawingIndexGenerator = new IndexGenerator
 
-    @currentEditingLayer = null
+    @focusingLayer = null
 
   addLayer: (layer) ->
     @layers.push layer
@@ -40,6 +40,12 @@ module.exports.Stage = class Stage
     return this
 
   bindEvent: ->
+    @canvas.on 'mousedown', (evt) =>
+      @broadcastMouseEvent evt
+
+    @canvas.on 'mousedown', (evt) =>
+      @broadcastMouseEvent evt
+
     @canvas.on 'click', (evt) =>
       @broadcastMouseEvent evt
 
@@ -68,8 +74,8 @@ module.exports.Stage = class Stage
       listeners = layer.listenersOf evt.name
       bubbling = false
       listeners.forEach (listener) ->
-        bubbling = (listener.call layer, evt.name, evt) ? false
-      return bubbling isnt false
+        bubbling = listener.call layer, evt.name, evt
+      return bubbling is true
 
   _draw: ->
     zIndexed = []
