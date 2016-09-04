@@ -3,6 +3,7 @@ Util = require('./util').Util
 Rect = require('./rect').Rect
 IndexGenerator = require('./index').IndexGenerator
 Canvas = require('./canvas').Canvas
+Point = require('./point.coffee').Point
 
 module.exports.Layer = class Layer
   @BORDER_DIRECTION:
@@ -20,11 +21,8 @@ module.exports.Layer = class Layer
 
     @zIndex = 0
 
-    @canvasX = 0
-    @canvasY = 0
-
-    @windowX = 0
-    @windowY = 0
+    @byCanvasPosition = new Point
+    @byWindowPosition = new Point
 
     @frame = new Rect(x, y, width, height)
     @bounds = new Rect(0, 0, width, height)
@@ -102,16 +100,16 @@ module.exports.Layer = class Layer
 
   _calculatePosition: ->
     if @parent isnt null
-      @canvasX = @parent.canvasX + @parent.bounds.origin.x + @frame.origin.x
-      @canvasY = @parent.canvasY + @parent.bounds.origin.y + @frame.origin.y
+      @byCanvasPosition.x = @parent.byCanvasPosition.x + @parent.bounds.origin.x + @frame.origin.x
+      @byCanvasPosition.y = @parent.byCanvasPosition.y + @parent.bounds.origin.y + @frame.origin.y
     else
-      @canvasX = @frame.origin.x
-      @canvasY = @frame.origin.y
+      @byCanvasPosition.x = @frame.origin.x
+      @byCanvasPosition.y = @frame.origin.y
 
   _applyRotate: ->
     if @rotate isnt 0
-      tx = @canvasX + @frame.size.width / 2
-      ty = @canvasY + @frame.size.height / 2
+      tx = @byCanvasPosition.x + @frame.size.width / 2
+      ty = @byCanvasPosition.y + @frame.size.height / 2
 
       @ctx.translate tx, ty
       @ctx.rotate @rotate * Math.PI / 180
@@ -138,7 +136,7 @@ module.exports.Layer = class Layer
 
     @ctx.beginPath()
 
-    @ctx.rect @canvasX, @canvasY, @frame.size.width, @frame.size.height
+    @ctx.rect @byCanvasPosition.x, @byCanvasPosition.y, @frame.size.width, @frame.size.height
 
     if @borderWidth > 0
       @ctx.strokeStyle = @borderColor
@@ -235,7 +233,7 @@ module.exports.Layer = class Layer
 
     @ctx.beginPath()
 
-    @ctx.rect @canvasX, @canvasY, @frame.size.width, @frame.size.height
+    @ctx.rect @byCanvasPosition.x, @byCanvasPosition.y, @frame.size.width, @frame.size.height
     ret = @ctx.isPointInPath x, y
 
     @ctx.closePath()
