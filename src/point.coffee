@@ -1,2 +1,2 @@
 module.exports.Point = class Point
-  constructor: (@x, @y) ->
+  constructor: (@x = 0, @y = 0) ->
