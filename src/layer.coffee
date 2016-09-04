@@ -20,8 +20,11 @@ module.exports.Layer = class Layer
 
     @zIndex = 0
 
-    @positionX = 0
-    @positionY = 0
+    @canvasX = 0
+    @canvasY = 0
+
+    @windowX = 0
+    @windowY = 0
 
     @frame = new Rect(x, y, width, height)
     @bounds = new Rect(0, 0, width, height)
@@ -99,16 +102,16 @@ module.exports.Layer = class Layer
 
   _calculatePosition: ->
     if @parent isnt null
-      @positionX = @parent.positionX + @parent.bounds.origin.x + @frame.origin.x
-      @positionY = @parent.positionY + @parent.bounds.origin.y + @frame.origin.y
+      @canvasX = @parent.canvasX + @parent.bounds.origin.x + @frame.origin.x
+      @canvasY = @parent.canvasY + @parent.bounds.origin.y + @frame.origin.y
     else
-      @positionX = @frame.origin.x
-      @positionY = @frame.origin.y
+      @canvasX = @frame.origin.x
+      @canvasY = @frame.origin.y
 
   _applyRotate: ->
     if @rotate isnt 0
-      tx = @positionX + @frame.size.width / 2
-      ty = @positionY + @frame.size.height / 2
+      tx = @canvasX + @frame.size.width / 2
+      ty = @canvasY + @frame.size.height / 2
 
       @ctx.translate tx, ty
       @ctx.rotate @rotate * Math.PI / 180
@@ -135,7 +138,7 @@ module.exports.Layer = class Layer
 
     @ctx.beginPath()
 
-    @ctx.rect @positionX, @positionY, @frame.size.width, @frame.size.height
+    @ctx.rect @canvasX, @canvasY, @frame.size.width, @frame.size.height
 
     if @borderWidth > 0
       @ctx.strokeStyle = @borderColor
@@ -232,7 +235,7 @@ module.exports.Layer = class Layer
 
     @ctx.beginPath()
 
-    @ctx.rect @positionX, @positionY, @frame.size.width, @frame.size.height
+    @ctx.rect @canvasX, @canvasY, @frame.size.width, @frame.size.height
     ret = @ctx.isPointInPath x, y
 
     @ctx.closePath()
