@@ -3,7 +3,7 @@ Util = require('./util').Util
 Rect = require('./rect').Rect
 IndexGenerator = require('./index').IndexGenerator
 Canvas = require('./canvas').Canvas
-Point = require('./point.coffee').Point
+Point = require('./point').Point
 
 module.exports.Layer = class Layer
   @BORDER_DIRECTION:
