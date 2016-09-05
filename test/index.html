@@ -23,7 +23,10 @@
     var stage = c.newStage();
 
     var layer3 = new brownie.Layer(30, 30, 100, 100);
+    layer3.rotate = 0;
     layer3.borderWidth = 1;
+    layer3.focusable = true;
+    layer3.dragable = true;
     stage.addLayer(layer3);
     layer3.on('click', function () {
         this.setBackgroundColor('green');
@@ -75,7 +78,7 @@
     brownie.Util.$one('#range').addEventListener('change', function () {
         //layer1.frame.origin.x = 60;
         //layer1.frame.origin.y = 60;
-        layer1.rotate = this.value;
+        layer3.rotate = this.value;
         stage.redraw();
         console.log(this.value);
     });

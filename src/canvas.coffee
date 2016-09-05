@@ -82,8 +82,13 @@ module.exports.Canvas = class Canvas
   _moveLayer: (x, y) ->
     @currentStage.focusingLayer.move x, y
 
+  resetTransform: ->
+    @ctx.setTransform @constructor.devicePixelRatio,
+      0, 0, @constructor.devicePixelRatio, 0, 0
+
   clear: ->
     @ctx.clearRect 0, 0, @raw.width, @raw.height
+    @resetTransform()
 
   newStage: ->
     stage = new Stage(this)

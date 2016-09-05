@@ -12,3 +12,4 @@ window.brownie =
   Rect: require('./rect').Rect
   Layer: require('./layer').Layer
   keyboard: require('./keyboard')
+  Matrix: require('./matrix').Matrix

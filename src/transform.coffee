@@ -5,55 +5,47 @@ cos = Math.cos
 
 proto = CanvasRenderingContext2D.prototype
 
-hasCT = 'currentTransform' of proto
-hasMozCT = 'mozCurrentTransform' of proto
+_setTransform = proto.setTransform
 
-if hasCT or hasMozCT
-  proto.getTransform = do ->
-    if hasCT isnt undefined
-      return ->
-        return @currentTransform
-    else
-      return ->
-        return @mozCurrentTransform
+_save = proto.save
+_restore = proto.restore
 
-else
-  _rotate = proto.rotate
-  _scale = proto.scale
-  _setTransform = proto.setTransform
-  _translate = proto.translate
-  _transform = proto.transform
+proto._currentTransform = new Matrix
+proto._tramsformStack = []
 
-  proto.currentTransform = new Matrix
+proto.save = ->
+  _save.call this
+  @_tramsformStack.push @_currentTransform
 
-  proto.setTransform = (a, b, c, d, e, f) ->
-    _setTransform.call this, a, b, c, d, e, f
-    @currentTransform.set a, b, c, d, e, f
-    return undefined
+proto.restore = ->
+  _restore.call this
+  @setTransformWithMatrix @_tramsformStack.pop()
 
-  proto.rotate = (angle) ->
-    m = new Matrix(cos(angle), sin(angle), -sin(angle), cos(angle), 0, 0)
-    @currentTransform = @currentTransform.multiply m
-    _rotate.call this, angle
-    return undefined
+proto.setTransform = (a, b, c, d, e, f) ->
+  _setTransform.call this, a, b, c, d, e, f
+  @_currentTransform = new Matrix(a, b, c, d, e, f)
 
-  proto.scale = (x, y) ->
-    m = new Matrix(x, 0, 0, y, 0, 0)
-    @currentTransform = @currentTransform.multiply m
-    _scale.call this, x, y
-    return undefined
+proto.setTransformWithMatrix = (m) ->
+  @setTransform m.a, m.b, m.c, m.d, m.e, m.f
 
-  proto.translate = (x, y) ->
-    m = new Matrix(0, 0, 0, 0, x, y)
-    @currentTransform = @currentTransform.multiply m
-    _translate.call this, x, y
-    return undefined
+proto.rotate = (angle) ->
+  c = cos(angle)
+  s = sin(angle)
+  @transformWithMatrix new Matrix(c, s, -s, c, 0, 0)
 
-  proto.transform = (a, b, c, d, e, f) ->
-    m = new Matrix(a, b, c, d, e, f)
-    @currentTransform = @currentTransform.multiply m
-    _transform.call this, a, b, c, d, e, f
-    return undefined
+proto.scale = (x, y) ->
+  @transformWithMatrix new Matrix(x, 0, 0, y, 0, 0)
 
-  proto.getTransform = ->
-    return @currentTransform
+proto.translate = (x, y) ->
+  @transformWithMatrix new Matrix(1, 0, 0, 1, x, y)
+
+proto.transformWithMatrix = (m) ->
+  @transform m.a, m.b, m.c, m.d, m.e, m.f
+
+proto.transform = (a, b, c, d, e, f) ->
+  m = new Matrix(a, b, c, d, e, f)
+  m = @_currentTransform.multiply m
+  @setTransformWithMatrix m
+
+proto.getTransform = ->
+  return @_currentTransform

@@ -56,6 +56,15 @@ module.exports.Layer = class Layer
 
     @dragable = false
 
+    @moveDelta = new Point
+
+  setupFocusableIfNeeded: ->
+    if @focusable isnt false
+      @on 'mousedown', @focus
+      @on 'mouseup', @blur
+    else
+      @off 'mousedown', @focus
+
   focus: ->
     @stage.focusingLayer?.blur()
     @stage.focusingLayer = this
@@ -70,13 +79,13 @@ module.exports.Layer = class Layer
     @redraw()
 
   moveTo: (x, y) ->
-    @frame.origin.x = x
-    @frame.origin.y = y
+    @moveDelta.x = x
+    @moveDelta.y = y
     @redraw()
 
-  move: (x, y) ->
-    @frame.origin.x += x
-    @frame.origin.y += y
+  move: (x = 0, y = 0) ->
+    @moveDelta.x += x;
+    @moveDelta.y += y;
     @redraw()
 
   moveLeft: (x = 1) ->
@@ -91,12 +100,8 @@ module.exports.Layer = class Layer
   moveDown: (y = 1) ->
     @move 0, y
 
-  setupFocusableIfNeeded: ->
-    if @focusable isnt false
-      @on 'mousedown', @focus
-      @on 'mouseup', @blur
-    else
-      @off 'mousedown', @focus
+  _applyMoving: ->
+    @ctx.translate @moveDelta.x, @moveDelta.y
 
   _calculatePosition: ->
     if @parent isnt null
@@ -117,22 +122,23 @@ module.exports.Layer = class Layer
 
   _applyParentTransform: ->
     if @parent isnt null and @parent.capturedTransform isnt null
-      @ctx.setTransform @parent.capturedTransform.a,
-        @parent.capturedTransform.b,
-        @parent.capturedTransform.c,
-        @parent.capturedTransform.d,
-        @parent.capturedTransform.e,
-        @parent.capturedTransform.f
+      @ctx.setTransformWithMatrix @parent.capturedTransform
+
+  captureTransform: ->
+    @capturedTransform = @ctx.getTransform()
 
   _drawPredefined: ->
     @ctx.beginPath()
 
     @_applyParentTransform()
 
+    if @dragable
+      @_applyMoving()
+
     @_calculatePosition()
     @_applyRotate()
 
-    @capturedTransform = @ctx.getTransform()
+    @captureTransform()
 
     @ctx.beginPath()
 

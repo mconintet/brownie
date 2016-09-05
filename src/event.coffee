@@ -52,9 +52,11 @@ module.exports.EventProducer = class EventProducer
     once = []
 
     for listener in ls
-      listener.call @context, data
+      bubbling = listener.call @context, data
       if listener.__fire_once__ is true
         once.push listener
+      if bubbling isnt true
+        break
 
     once.forEach (listener) ->
       listener.__fire_once__ = false
