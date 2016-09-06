@@ -60,6 +60,7 @@ module.exports.Canvas = class Canvas
         @fire 'mousedown', evt
 
     @raw.addEventListener 'mousemove', (evt) =>
+      evt = @_prepareEvent evt, 'mousemove'
       [x, y] = @mousemovePrevPoint
       x = evt.x - x
       y = evt.y - y

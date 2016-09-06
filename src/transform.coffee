@@ -26,7 +26,8 @@ proto.setTransform = (a, b, c, d, e, f) ->
   @_currentTransform = new Matrix(a, b, c, d, e, f)
 
 proto.setTransformWithMatrix = (m) ->
-  @setTransform m.a, m.b, m.c, m.d, m.e, m.f
+  _setTransform.call this, m.a, m.b, m.c, m.d, m.e, m.f
+  @_currentTransform = m
 
 proto.rotate = (angle) ->
   c = cos(angle)

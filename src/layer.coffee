@@ -4,6 +4,7 @@ Rect = require('./rect').Rect
 IndexGenerator = require('./index').IndexGenerator
 Canvas = require('./canvas').Canvas
 Point = require('./point').Point
+Matrix = require('./matrix').Matrix
 
 module.exports.Layer = class Layer
   @BORDER_DIRECTION:
@@ -100,9 +101,6 @@ module.exports.Layer = class Layer
   moveDown: (y = 1) ->
     @move 0, y
 
-  _applyMoving: ->
-    @ctx.translate @moveDelta.x, @moveDelta.y
-
   _calculatePosition: ->
     if @parent isnt null
       @byCanvasPosition.x = @parent.byCanvasPosition.x + @parent.bounds.origin.x + @frame.origin.x
@@ -120,9 +118,19 @@ module.exports.Layer = class Layer
       @ctx.rotate @rotate * Math.PI / 180
       @ctx.translate -tx, -ty
 
-  _applyParentTransform: ->
-    if @parent isnt null and @parent.capturedTransform isnt null
-      @ctx.setTransformWithMatrix @parent.capturedTransform
+  _applyTransform: ->
+    if @dragable
+      m = new Matrix()
+      m.e = @moveDelta.x
+      m.f = @moveDelta.y
+      if @parent?.capturedTransform?
+        m = m.multiply @parent.capturedTransform
+      else
+        m = m.multiply @ctx.getTransform()
+      @ctx.setTransformWithMatrix m
+    else
+      if @parent?.capturedTransform?
+        @ctx.setTransformWithMatrix @parent.capturedTransform
 
   captureTransform: ->
     @capturedTransform = @ctx.getTransform()
@@ -130,10 +138,7 @@ module.exports.Layer = class Layer
   _drawPredefined: ->
     @ctx.beginPath()
 
-    @_applyParentTransform()
-
-    if @dragable
-      @_applyMoving()
+    @_applyTransform()
 
     @_calculatePosition()
     @_applyRotate()
