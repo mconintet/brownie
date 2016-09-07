@@ -1,5 +1,6 @@
 Util = require('./util').Util
 IndexGenerator = require('./index').IndexGenerator
+History = require('./history').History
 
 module.exports.Stage = class Stage
   constructor: (@canvas) ->
@@ -13,6 +14,26 @@ module.exports.Stage = class Stage
     @drawingIndexGenerator = new IndexGenerator
 
     @focusingLayer = null
+
+    @history = new History
+
+    @history.on 'forward', =>
+      console.log 'forward'
+      @handleHistoryChanged()
+
+    @history.on 'back', =>
+      console.log 'back'
+      @handleHistoryChanged()
+
+  handleHistoryChanged: ->
+    element = @history.currentElement()
+    element?.forEach (change) =>
+      id = change['id']
+      if id?
+        layer = @getLayerById id
+        layer.sync change
+
+    @redraw() if element?
 
   addLayer: (layer) ->
     @layers.push layer
@@ -54,12 +75,22 @@ module.exports.Stage = class Stage
       return
 
     for layer in layers
-      cb layer, depth
+      if cb(layer, depth) is true
+        break
+
       if layer.children.length > 0
         @_walkLayers layer.children, cb, depth++
 
   walkLayers: (cb) ->
     @_walkLayers @layers, cb
+
+  getLayerById: (id) ->
+    found = null
+    @walkLayers (layer) ->
+      if layer.id is id
+        found = layer
+        return true
+    found
 
   broadcastMouseEvent: (evt) ->
     fulfilled = []

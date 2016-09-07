@@ -66,17 +66,39 @@ module.exports.Layer = class Layer
     else
       @off 'mousedown', @focus
 
+  backupAttr: (attr, newElem = false) ->
+    val = this[attr]
+    if val
+      if newElem
+        @stage.history.newElement()
+
+      elem = @stage.history.currentElement()
+      id = @id
+      elem.push {
+        id: id,
+        attr: attr,
+        val: Util.clone(val)
+      }
+
+  sync: (change) ->
+    this[change['attr']] = change['val']
+
   focus: ->
     @stage.focusingLayer?.blur()
     @stage.focusingLayer = this
     @focusing = true
-    @redraw()
+    if @dragable
+      @backupAttr 'moveDelta'
+
     @stage.canvas.once 'mouseup', =>
       @blur()
+    @redraw()
 
   blur: ->
     @stage.focusingLayer = null
     @focusing = false
+    if @dragable
+      @backupAttr 'moveDelta', true
     @redraw()
 
   moveTo: (x, y) ->
