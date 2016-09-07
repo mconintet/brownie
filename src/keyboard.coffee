@@ -46,18 +46,14 @@ module.exports.EventObserver = class EventObserver
       @on 'keydown', listener
     else
       @eventProducer.on event, listener
-    return this
 
   once: (event, listener) ->
     @eventProducer.once event, listener
-    return this
 
   off: (event, listener) ->
     @eventProducer.off event, listener
-    return this
 
   fire: (event, data) ->
     @eventProducer.fire event, data
-    return this
 
 module.exports.eventObserver = new EventObserver
