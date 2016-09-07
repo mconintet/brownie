@@ -70,6 +70,9 @@ module.exports.Stage = class Stage
     @canvas.on 'click', (evt) =>
       @broadcastMouseEvent evt
 
+    @canvas.on 'dblclick', (evt) =>
+      @broadcastMouseEvent evt
+
   _walkLayers: (layers, cb, depth = 0) ->
     if depth > 100
       return

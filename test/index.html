@@ -116,6 +116,9 @@
     var layer5 = new brownie.TextLayer(200, 100, 100, 100);
     layer5.backgroundColor = 'green';
     layer5.setText('测试文本');
+    layer5.on('dblclick', function () {
+        console.log('dblclick on layer5');
+    });
     stage.addLayer(layer5);
 </script>
 </body>

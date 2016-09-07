@@ -52,6 +52,11 @@ module.exports.Canvas = class Canvas
     return evt
 
   bindMouseEvent: ->
+    @raw.addEventListener 'dblclick', (evt) =>
+      evt = @_prepareEvent evt, 'dblclick'
+      if evt.x >= 0 and evt.y >= 0
+        @fire 'dblclick', evt
+
     @raw.addEventListener 'mousedown', (evt) =>
       @mousemoveDelta = [0, 0]
 
