@@ -253,22 +253,18 @@ module.exports.Layer = class Layer
 
   on: (event, listener) ->
     @eventProducer.on event, listener
-    return this
 
   once: (event, listener) ->
     @eventProducer.once event, listener
-    return this
 
   off: (event, listener) ->
     @eventProducer.off event, listener
-    return this
 
   fire: (event, data) ->
     @eventProducer.fire event, data
-    return this
 
   hasEvent: (event) ->
-    return @eventProducer.has event
+    @eventProducer.has event
 
   listenersOf: (event) ->
-    return @eventProducer.listenersOf event
+    @eventProducer.listenersOf event
