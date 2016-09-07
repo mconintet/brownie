@@ -13,3 +13,4 @@ window.brownie =
   Layer: require('./layer').Layer
   keyboard: require('./keyboard')
   Matrix: require('./matrix').Matrix
+  ImageLayer: require('./layer/Image').Image

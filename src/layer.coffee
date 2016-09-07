@@ -17,7 +17,7 @@ module.exports.Layer = class Layer
   @indexGenerator: new IndexGenerator
 
   constructor: (x, y, width, height) ->
-    @id = @constructor.indexGenerator.auto()
+    @id = Layer.indexGenerator.auto()
     @drawingIndex = -1
 
     @zIndex = 0
@@ -34,7 +34,7 @@ module.exports.Layer = class Layer
 
     @borderWidth = 0
     @borderColor = '#000'
-    @borderDirection = @constructor.BORDER_DIRECTION.ALL
+    @borderDirection = Layer.BORDER_DIRECTION.ALL
 
     @borderSemiMinorAxes = 0
     @borderSemiMajorAxes = 0
