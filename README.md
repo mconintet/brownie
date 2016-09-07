@@ -13,7 +13,7 @@ This is a canvas toolkit in coffeescript, it can be used to build a static image
 - [x] history stack
 - [ ] layer editor - move/rotate/delete/scale
 - [x] image layer
-- [ ] double click on layer
+- [x] double click on layer
 - [ ] editable text layer
 
 ## Licence
