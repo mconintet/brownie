@@ -27,10 +27,14 @@ module.exports.Image = class Image extends Layer
       @image.onload = =>
         @onImageLoaded()
 
-  setSrc: (@src) ->
+  setSrc: (src) ->
+    if src is @src
+      return
+    @src = src
     @image.src = @src
 
   setSrcSize: (@sx = 0, @sy = 0, @sWidth = 0, @sHeight = 0) ->
+    @redraw() if @imageLoaded
 
   _drawPredefined: ->
     super()
