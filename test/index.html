@@ -17,6 +17,10 @@
 
 <canvas id="c" width="500" height="300"></canvas>
 <input id="range" type="range" value="0"/>
+<div>
+    <button id="history-forward">history forward</button>
+    <button id="history-back">history back</button>
+</div>
 <script src="../dist/js/brownie.min.js"></script>
 <script>
     var c = new brownie.Canvas('#c');
@@ -42,6 +46,7 @@
     layer1.rotate = 0;
     layer1.borderWidth = 1;
     layer1.focusable = true;
+    layer1.dragable = true;
     stage.addLayer(layer1);
 
     layer1.on('click', function () {
@@ -81,6 +86,19 @@
         layer1.rotate = this.value;
         stage.redraw();
         console.log(this.value);
+    });
+
+    var btnHistoryForward = brownie.Util.$one('#history-forward');
+    var btnHistoryBack = brownie.Util.$one('#history-back');
+
+    btnHistoryForward.addEventListener('click', function () {
+        console.log(stage.history);
+        stage.history.forward();
+    });
+
+    btnHistoryBack.addEventListener('click', function () {
+        console.log(stage.history);
+        stage.history.back();
     });
 </script>
 </body>
