@@ -1,24 +1,27 @@
 module.exports.Util = class Util
   @type: (obj) ->
-    return Object::toString.call obj
+    Object::toString.call obj
 
   @isString: (obj) ->
-    return typeof obj is 'string'
+    typeof obj is 'string'
 
   @isObject: (obj) ->
-    return typeof obj is 'object' and obj isnt null
+    typeof obj is 'object' and obj isnt null
 
   @isArray: (obj) ->
-    return Array.isArray obj
+    Array.isArray obj
 
   @toArray: (obj) ->
-    return  Array::slice.call obj
+    Array::slice.call obj
 
   @$one: (selector) ->
-    return document.querySelector(selector)
+    document.querySelector(selector)
 
   @$all: (selector) ->
-    return @toArray document.querySelectorAll(selector)
+    @toArray document.querySelectorAll(selector)
+
+  @aRemoveAt: (arr, index) ->
+    arr.splice(index, 1)
 
   @aRemoveEqual: (arr, eq) ->
     for item, i in arr
