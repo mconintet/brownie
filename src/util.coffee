@@ -40,3 +40,37 @@ module.exports.Util = class Util
       if item is before
         arr.splice i, 0, stuff
         return
+
+  @oExtend: (dst, src) ->
+    args = @toArray arguments
+    target = args.shift()
+
+    for arg in args
+      if !arg
+        continue
+
+      for own k, v of arg
+        if @isObject v
+          if !target[k]
+            target[k] = {}
+          @oExtend target[k], v
+        else if @isArray v
+          if !target[k]
+            target[k] = []
+          v.forEach (v) ->
+            target[k].push @clone(v)
+        else
+          target[k] = v
+
+    target
+
+  @clone: (target) ->
+    if @isObject target
+      return @oExtend {}, target
+    else if @isArray target
+      ret = []
+      for v in target
+        ret.push @clone(v)
+      return ret
+    else
+      return target
