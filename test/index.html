@@ -11,6 +11,10 @@
         #c {
             border: 1px solid #000;
         }
+
+        p {
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -21,6 +25,7 @@
     <button id="history-forward">history forward</button>
     <button id="history-back">history back</button>
 </div>
+<p>测试文本</p>
 <script src="../dist/js/brownie.min.js"></script>
 <script>
     var c = new brownie.Canvas('#c');
@@ -84,6 +89,7 @@
         //layer1.frame.origin.x = 60;
         //layer1.frame.origin.y = 60;
         layer4.rotate = this.value;
+        layer5.rotate = this.value;
         stage.redraw();
         console.log(this.value);
     });
@@ -106,6 +112,11 @@
     layer4.dragable = true;
     layer4.setSrc('https://mdn.mozillademos.org/files/5397/rhino.jpg');
     stage.addLayer(layer4);
+
+    var layer5 = new brownie.TextLayer(200, 100, 100, 100);
+    layer5.backgroundColor = 'green';
+    layer5.setText('测试文本');
+    stage.addLayer(layer5);
 </script>
 </body>
 </html>

@@ -6,12 +6,13 @@ This is a canvas toolkit in coffeescript, it can be used to build a static image
 - [x] layers - only one canvas is used
 - [x] absolute/relative position
 - [x] z-index of layer
+- [ ] bring layer to frontend
 - [x] hit test on layer
 - [x] keyboard util
 - [x] layer drag-drop
 - [x] history stack
 - [ ] layer editor - move/rotate/delete/scale
-- [ ] image layer
+- [x] image layer
 - [ ] double click on layer
 - [ ] editable text layer
 
