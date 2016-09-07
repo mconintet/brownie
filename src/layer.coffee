@@ -56,19 +56,13 @@ module.exports.Layer = class Layer
     @focusing = false
 
     @dragable = false
+    @moveable = false
 
     @moveDelta = new Point
 
-  setupFocusableIfNeeded: ->
-    if @focusable isnt false
-      @on 'mousedown', @focus
-      @on 'mouseup', @blur
-    else
-      @off 'mousedown', @focus
-
-  backupAttr: (attr, newElem = false) ->
+  backupAttr: (attr, newElem = true) ->
     val = this[attr]
-    if val
+    if val?
       if newElem
         @stage.history.newElement()
 
@@ -87,18 +81,17 @@ module.exports.Layer = class Layer
     @stage.focusingLayer?.blur()
     @stage.focusingLayer = this
     @focusing = true
+    @moveable = true
     if @dragable
       @backupAttr 'moveDelta'
-
-    @stage.canvas.once 'mouseup', =>
-      @blur()
+      @stage.canvas.once 'mouseup', =>
+        @moveable = false
+        @backupAttr 'moveDelta'
     @redraw()
 
   blur: ->
     @stage.focusingLayer = null
     @focusing = false
-    if @dragable
-      @backupAttr 'moveDelta', true
     @redraw()
 
   moveTo: (x, y) ->
@@ -191,7 +184,6 @@ module.exports.Layer = class Layer
       return this
 
     @drawingIndex = @stage.drawingIndexGenerator.auto()
-    @setupFocusableIfNeeded()
 
     @ctx.save()
 
@@ -205,6 +197,18 @@ module.exports.Layer = class Layer
   redraw: ->
     if @stage isnt null
       @stage.redraw()
+
+  setDragable: (@dragable) ->
+    if @dragable isnt false
+      @on 'mousedown', @focus
+    else
+      @off 'mousedown', @focus
+
+  bringToFrontend: ->
+    @backupAttr 'zIndex'
+    @zIndex = @stage.maxZIndex + 1
+    @backupAttr 'zIndex'
+    @redraw()
 
   setZIndex: (i) ->
     @zIndex = i

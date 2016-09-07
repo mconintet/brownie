@@ -61,6 +61,7 @@ module.exports.History = class History
 
   currentElement: ->
     if @currentIndex is -1
+      @currentIndex++
       @newElement()
     else
       @stack[@currentIndex]

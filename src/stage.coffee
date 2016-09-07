@@ -22,8 +22,9 @@ module.exports.Stage = class Stage
       @handleHistoryChanged()
 
     @history.on 'back', =>
-      console.log 'back'
       @handleHistoryChanged()
+
+    @maxZIndex = 0
 
   handleHistoryChanged: ->
     element = @history.currentElement()
@@ -32,7 +33,6 @@ module.exports.Stage = class Stage
       if id?
         layer = @getLayerById id
         layer.sync change
-
     @redraw() if element?
 
   addLayer: (layer) ->
@@ -64,7 +64,7 @@ module.exports.Stage = class Stage
     @canvas.on 'mousedown', (evt) =>
       @broadcastMouseEvent evt
 
-    @canvas.on 'mousedown', (evt) =>
+    @canvas.on 'mouseup', (evt) =>
       @broadcastMouseEvent evt
 
     @canvas.on 'click', (evt) =>
@@ -127,6 +127,8 @@ module.exports.Stage = class Stage
 
       zIndexed.forEach (layer) ->
         layer.draw()
+
+      @maxZIndex = zIndexed[zIndexed.length - 1].zIndex
 
   redraw: ->
     @canvas.clear()
