@@ -1,5 +1,4 @@
 Layer = require('../layer').Layer
-Canvas = require('../canvas').Canvas
 
 _Image = window.Image
 
