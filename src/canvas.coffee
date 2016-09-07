@@ -72,7 +72,7 @@ module.exports.Canvas = class Canvas
 
       @mousemovePrevPoint = [evt.x, evt.y]
 
-      if @currentStage?.focusingLayer?.dragable
+      if @currentStage?.focusingLayer?.moveable
         @_moveLayer x, y
 
     @raw.addEventListener 'mouseup', (evt) =>
@@ -97,24 +97,19 @@ module.exports.Canvas = class Canvas
     @resetTransform()
 
   newStage: ->
-    stage = new Stage(this)
-    return stage
+    new Stage(this)
 
   on: (event, listener) ->
     @eventProducer.on event, listener
-    return this
 
   once: (event, listener) ->
     @eventProducer.once event, listener
-    return this
 
   off: (event, listener) ->
     @eventProducer.off event, listener
-    return this
 
   fire: (event, data) ->
     @eventProducer.fire event, data
-    return this
 
   hasEvent: (event) ->
-    return @eventProducer.has event
+    @eventProducer.has event
