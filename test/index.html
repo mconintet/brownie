@@ -24,6 +24,8 @@
 <div>
     <button id="history-forward">history forward</button>
     <button id="history-back">history back</button>
+    <button id="bringToFrontend">bring to frontend</button>
+    <button id="reset">reset</button>
 </div>
 <p>测试文本</p>
 <script src="../dist/js/brownie.min.js"></script>
@@ -35,7 +37,7 @@
     layer3.rotate = 0;
     layer3.borderWidth = 1;
     layer3.focusable = true;
-    layer3.dragable = true;
+    layer3.setDragable(true);
     stage.addLayer(layer3);
     layer3.on('click', function () {
         this.setBackgroundColor('green');
@@ -51,7 +53,7 @@
     layer1.rotate = 0;
     layer1.borderWidth = 1;
     layer1.focusable = true;
-    layer1.dragable = true;
+    layer1.setDragable(true);
     stage.addLayer(layer1);
 
     layer1.on('click', function () {
@@ -63,7 +65,7 @@
     layer2.rotate = 0;
     layer2.borderWidth = 1;
     layer2.focusable = true;
-    layer2.dragable = true;
+    layer2.setDragable(true);
     layer1.addChild(layer2);
 
     layer2.on('click', function () {
@@ -96,6 +98,8 @@
 
     var btnHistoryForward = brownie.Util.$one('#history-forward');
     var btnHistoryBack = brownie.Util.$one('#history-back');
+    var btnBringToFrontend = brownie.Util.$one('#bringToFrontend');
+    var btnReset = brownie.Util.$one('#reset');
 
     btnHistoryForward.addEventListener('click', function () {
         console.log(stage.history);
@@ -109,7 +113,7 @@
 
     var layer4 = new brownie.ImageLayer(10, 10, 100, 100);
     layer4.focusable = true;
-    layer4.dragable = true;
+    layer4.setDragable(true);
     layer4.setSrc('https://mdn.mozillademos.org/files/5397/rhino.jpg');
     stage.addLayer(layer4);
 
@@ -120,6 +124,20 @@
         console.log('dblclick on layer5');
     });
     stage.addLayer(layer5);
+
+    btnBringToFrontend.addEventListener('click', function () {
+        var layer = stage.focusingLayer;
+        if (layer) {
+            layer.bringToFrontend();
+        }
+    });
+
+    btnReset.addEventListener('click', function () {
+        var layer = stage.focusingLayer;
+        if (layer) {
+            stage.history.back();
+        }
+    });
 </script>
 </body>
 </html>
