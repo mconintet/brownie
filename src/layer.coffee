@@ -5,6 +5,7 @@ IndexGenerator = require('./index').IndexGenerator
 Canvas = require('./canvas').Canvas
 Point = require('./point').Point
 Matrix = require('./matrix').Matrix
+$ = require('./dom').$
 
 module.exports.Layer = class Layer
   @BORDER_DIRECTION:
@@ -59,6 +60,42 @@ module.exports.Layer = class Layer
     @moveable = false
 
     @moveDelta = new Point
+
+    @isHidden = false
+
+    @handlerDom = null
+
+  syncByWindowPosition: ->
+    rect = $(@stage?.canvas.raw).boundRect()
+    x = rect.left
+    y = rect.top + window.scrollY
+    @byWindowPosition.x = @byCanvasPosition.x + x
+    @byWindowPosition.y += @byCanvasPosition.y + y
+
+  getHandlerDom: ->
+    if @handlerDom is null
+      div = "<div id='b-layer-handler-#{ @id }'></div>"
+      @handlerDom = $(document.body).append div
+      @syncByWindowPosition()
+      $(@handlerDom).css {
+        display: 'none',
+        width: @frame.size.width + 'px',
+        height: @frame.size.height + 'px',
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        position: 'absolute',
+        top: @byWindowPosition.y + 'px',
+        left: @byWindowPosition.x + 'px',
+        border: '1px solid #000'
+      }
+    @handlerDom
+
+  openHandler: ->
+    $(@getHandlerDom()).css 'display', 'block'
+    @setIsHidden true
+
+  closeHandler: ->
+    $(@getHandlerDom()).css 'display', 'none'
+    @setIsHidden false
 
   backupAttr: (attr, newElem = true) ->
     val = this[attr]
@@ -151,6 +188,9 @@ module.exports.Layer = class Layer
     @capturedTransform = @ctx.getTransform()
 
   _drawPredefined: ->
+    if @isHidden
+      return
+
     @ctx.beginPath()
 
     @_applyTransform()
@@ -210,20 +250,26 @@ module.exports.Layer = class Layer
     @backupAttr 'zIndex'
     @redraw()
 
-  setZIndex: (i) ->
-    @zIndex = i
+  removeFromSuperLayer: ->
+    @capturedTransform = null
+    @parent?.removeChild this
+    document.body.removeChild @handlerDom if @handlerDom
+    @handlerDom = null
     @redraw()
 
-  setRotate: (degree) ->
-    @rotate = degree
+  setIsHidden: (@isHidden) ->
     @redraw()
 
-  setBackgroundColor: (color) ->
-    @backgroundColor = color
+  setZIndex: (@zIndex) ->
     @redraw()
 
-  setBorderWidth: (width) ->
-    @borderWidth = width
+  setRotate: (@rotate) ->
+    @redraw()
+
+  setBackgroundColor: (@backgroundColor) ->
+    @redraw()
+
+  setBorderWidth: (@borderWidth) ->
     @redraw()
 
   addChild: (child) ->

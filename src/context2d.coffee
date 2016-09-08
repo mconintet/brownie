@@ -50,3 +50,55 @@ proto.transform = (a, b, c, d, e, f) ->
 
 proto.getTransform = ->
   return @_currentTransform
+
+proto.fillTextFlexibly = (text, x, y, maxWidth, lineHeight = 0) ->
+  t = @measureText('t')
+  fontHeight = t.actualBoundingBoxAscent + t.actualBoundingBoxDescent
+  paddingVertical = 2
+  if lineHeight < fontHeight
+    lineHeight = fontHeight + paddingVertical * 2
+  else
+    paddingVertical = (lineHeight - fontHeight) / 2
+
+  w = 0
+  lines = []
+  line = {
+    x: x,
+    y: y,
+    str: []
+  }
+  y += paddingVertical
+
+  i = 0
+  len = text.length
+  while i < len
+    c = text[i]
+    w += @measureText(c).width
+    if c is '\r' or c is '\n'
+      lines.push line if line.str.length > 0
+      y += fontHeight + paddingVertical
+      w = 0
+      line = {
+        x: x,
+        y: y,
+        str: []
+      }
+      if c is '\r' and text[i + 1] is '\n'
+        i += 2
+        continue
+    else if w <= maxWidth
+      line.str.push c
+    else
+      lines.push line if line.str.length > 0
+      y += fontHeight + paddingVertical
+      w = 0
+      line = {
+        x: x,
+        y: y
+        str: [c]
+      }
+    i++
+
+  lines.push line if line.str.length > 0
+  for line in lines
+    @fillText line.str.join(''), line.x, line.y

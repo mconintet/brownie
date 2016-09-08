@@ -74,3 +74,12 @@ module.exports.Util = class Util
       return ret
     else
       return target
+
+  @sTrim: (str, sep = '\\s') ->
+    str.replace(new RegExp('^' + sep + '+|' + sep + '+$', 'g'), '')
+
+  @sTrimL: (str, sep = '\\s') ->
+    str.replace(new RegExp('^' + sep + '+', 'g'), '')
+
+  @sTrimR: (str, sep = '\\s') ->
+    str.replace(new RegExp(sep + '+$', 'g'), '')

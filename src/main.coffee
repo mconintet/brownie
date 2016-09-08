@@ -4,7 +4,7 @@ if CanvasRenderingContext2D is undefined
 if window.brownie isnt undefined
   throw new Error('namespace \'brownie\' has been used by other code')
 
-require './transform'
+require './context2d'
 
 window.brownie =
   Util: require('./util').Util

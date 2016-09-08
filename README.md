@@ -11,10 +11,11 @@ This is a canvas toolkit in coffeescript, it can be used to build a static image
 - [x] keyboard util
 - [x] layer drag-drop
 - [x] history stack
-- [ ] layer editor - move/rotate/delete/scale
+- [ ] layer handler - move/rotate/delete/scale
 - [x] image layer
 - [x] double click on layer
-- [ ] editable text layer
+- [x] editable text layer
+- [x] auto line breaks
 
 ## Licence
 
