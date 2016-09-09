@@ -177,10 +177,10 @@ module.exports.Layer = class Layer
         m = m.multiply @parent.capturedTransform
       else
         m = m.multiply @ctx.getTransform()
-      @ctx.setTransformWithMatrix m
     else
       if @parent?.capturedTransform?
-        @ctx.setTransformWithMatrix @parent.capturedTransform
+        m = @parent.capturedTransform
+    @ctx.setTransformWithMatrix m
 
   captureTransform: ->
     @capturedTransform = @ctx.getTransform()
@@ -238,6 +238,11 @@ module.exports.Layer = class Layer
       @on 'mousedown', @focus
     else
       @off 'mousedown', @focus
+
+  resize: (nw, nh) ->
+    @frame.size.width = nw
+    @frame.size.height = nh
+    @redraw()
 
   bringToFrontend: ->
     @backupAttr 'zIndex'

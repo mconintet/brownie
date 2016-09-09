@@ -11,7 +11,7 @@ This is a canvas toolkit in coffeescript, it can be used to build a static image
 - [x] keyboard util
 - [x] layer drag-drop
 - [x] history stack
-- [ ] layer handler - move/rotate/delete/scale
+- [x] layer handler - move/rotate/delete/resize
 - [x] image layer
 - [x] double click on layer
 - [x] editable text layer

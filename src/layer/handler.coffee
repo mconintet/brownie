@@ -7,12 +7,12 @@ module.exports.Handler = class Handler
     @_prepareBtnMove()
     @_prepareBtnRotate()
     @_prepareBtnDelete()
-    @_prepareBtnScale()
+    @_prepareBtnResize()
 
   _prepareContainer: ->
     div = "<div id='b-layer-handler-#{ @id } b-layer-handler'>
 <i class='fa fa-arrows move'></i>
-<i class='fa fa-arrows-h scale'></i>
+<i class='fa fa-arrows-h resize'></i>
 <i class='fa fa-repeat rotate'></i>
 <i class='fa fa-trash-o delete'></i>
 </div>"
@@ -145,16 +145,41 @@ module.exports.Handler = class Handler
         @rotatable = false
         @layer.setRotate @rotate
 
-  _prepareBtnScale: ->
-    @btnScale = @container.find('i.scale')
-    @btnScale.css {
+  _prepareBtnResize: ->
+    @btnResize = @container.find('i.resize')
+    @btnResize.css {
       position: 'absolute',
       fontSize: '14px',
       right: '-17px',
-      bottom: '-12px',
+      bottom: '-9px',
       transform: 'rotate(44deg)',
       cursor: 'pointer'
     }
+
+    @btnResize.on 'mousedown', (evt) =>
+      @resizeable = true
+      @saleablePrev = [evt.clientX, evt.clientY]
+
+    $(document).on 'mousemove', (evt) =>
+      if @resizeable
+        prev = @saleablePrev
+        dx = evt.clientX - prev[0]
+        dy = evt.clientY - prev[1]
+        width = @container.css('width') + dx
+        height = @container.css('height') + dy
+        @container.css {
+          width: width + 'px',
+          height: height + 'px'
+        }
+        @saleablePrev = [evt.clientX, evt.clientY]
+        evt.preventDefault()
+
+    $(document).on 'mouseup', =>
+      if @resizeable
+        @resizeable = false
+        nw = @container.css('width')
+        nh = @container.css('height')
+        @layer.resize nw, nh
 
   open: ->
     if @layer.parent is null
