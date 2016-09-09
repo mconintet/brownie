@@ -36,29 +36,28 @@ module.exports.Stage = class Stage
     @redraw() if element?
 
   addLayer: (layer) ->
+    layer.parent = this
     @layers.push layer
     @redraw()
-    return this
 
   addLayerBefore: (layer, before) ->
+    layer.parent = this
     Util.aInsertBefore @layers, layer, before
     @redraw()
-    return this
 
   addLayerAfter: (layer, after) ->
+    layer.parent = this
     Util.aInsertAfter @layers, layer, after
     @redraw()
-    return this
 
   removeLayer: (layer) ->
+    layer.parent = null
     Util.aRemoveEqual @layers, layer
     @redraw()
-    return this
 
   clearLayers: ->
     @layers = []
     @redraw()
-    return this
 
   bindEvent: ->
     @canvas.on 'mousedown', (evt) =>
