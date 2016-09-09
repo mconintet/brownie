@@ -6,7 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-
+    <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet">
     <style>
         #c {
             border: 1px solid #000;
@@ -37,7 +37,7 @@
     layer3.rotate = 0;
     layer3.borderWidth = 1;
     layer3.focusable = true;
-    layer3.setDragable(true);
+    layer3.setDraggable(true);
     stage.addLayer(layer3);
     layer3.on('click', function () {
         this.setBackgroundColor('green');
@@ -53,7 +53,7 @@
     layer1.rotate = 0;
     layer1.borderWidth = 1;
     layer1.focusable = true;
-    layer1.setDragable(true);
+    layer1.setDraggable(true);
     stage.addLayer(layer1);
 
     layer1.on('click', function () {
@@ -65,7 +65,7 @@
     layer2.rotate = 0;
     layer2.borderWidth = 1;
     layer2.focusable = true;
-    layer2.setDragable(true);
+    layer2.setDraggable(true);
     layer1.addChild(layer2);
 
     layer2.on('click', function () {
@@ -113,12 +113,13 @@
 
     var layer4 = new brownie.ImageLayer(10, 10, 100, 100);
     layer4.focusable = true;
-    layer4.setDragable(true);
+    layer4.setDraggable(true);
     layer4.setSrc('https://mdn.mozillademos.org/files/5397/rhino.jpg');
     stage.addLayer(layer4);
 
     var layer5 = new brownie.TextLayer(200, 100, 100, 100);
     layer5.backgroundColor = 'green';
+    layer5.setDraggable(true);
     layer5.setText('测试文本');
     layer5.on('dblclick', function () {
         console.log('dblclick on layer5');

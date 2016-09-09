@@ -6,6 +6,7 @@ Canvas = require('./canvas').Canvas
 Point = require('./point').Point
 Matrix = require('./matrix').Matrix
 $ = require('./dom').$
+Handler = require('./layer/handler').Handler
 
 module.exports.Layer = class Layer
   @BORDER_DIRECTION:
@@ -56,46 +57,43 @@ module.exports.Layer = class Layer
     @useDefaultFocusStyle = true
     @focusing = false
 
-    @dragable = false
+    @draggable = false
     @moveable = false
 
     @moveDelta = new Point
 
     @isHidden = false
 
-    @handlerDom = null
+    @handler = null
 
   syncByWindowPosition: ->
+    if @draggable
+      m = new Matrix()
+      m.e = @moveDelta.x
+      m.f = @moveDelta.y
+      if @parent?.capturedTransform?
+        m = m.multiply @parent.capturedTransform
+      else
+        m = m.multiply @ctx.getTransform()
+    else
+      if @parent?.capturedTransform?
+        m = @parent.capturedTransform
+
     rect = $(@stage?.canvas.raw).boundRect()
     x = rect.left
     y = rect.top + window.scrollY
-    @byWindowPosition.x = @byCanvasPosition.x + x
-    @byWindowPosition.y += @byCanvasPosition.y + y
+    @byWindowPosition.x = x + @byCanvasPosition.x + m.e / Canvas.devicePixelRatio
+    @byWindowPosition.y = y + @byCanvasPosition.y + m.f / Canvas.devicePixelRatio
 
-  getHandlerDom: ->
-    if @handlerDom is null
-      div = "<div id='b-layer-handler-#{ @id }'></div>"
-      @handlerDom = $(document.body).append div
-      @syncByWindowPosition()
-      $(@handlerDom).css {
-        display: 'none',
-        width: @frame.size.width + 'px',
-        height: @frame.size.height + 'px',
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        position: 'absolute',
-        top: @byWindowPosition.y + 'px',
-        left: @byWindowPosition.x + 'px',
-        border: '1px solid #000'
-      }
-    @handlerDom
+  getHandler: ->
+    @handler = new Handler(this) if @handler is null
+    @handler
 
   openHandler: ->
-    $(@getHandlerDom()).css 'display', 'block'
-    @setIsHidden true
+    @getHandler().open()
 
   closeHandler: ->
-    $(@getHandlerDom()).css 'display', 'none'
-    @setIsHidden false
+    @getHandler().close()
 
   backupAttr: (attr, newElem = true) ->
     val = this[attr]
@@ -119,7 +117,7 @@ module.exports.Layer = class Layer
     @stage.focusingLayer = this
     @focusing = true
     @moveable = true
-    if @dragable
+    if @draggable
       @backupAttr 'moveDelta'
       @stage.canvas.once 'mouseup', =>
         @moveable = false
@@ -154,7 +152,7 @@ module.exports.Layer = class Layer
     @move 0, y
 
   _calculatePosition: ->
-    if @parent isnt null
+    if @parent isnt null and @parent instanceof Layer
       @byCanvasPosition.x = @parent.byCanvasPosition.x + @parent.bounds.origin.x + @frame.origin.x
       @byCanvasPosition.y = @parent.byCanvasPosition.y + @parent.bounds.origin.y + @frame.origin.y
     else
@@ -171,7 +169,7 @@ module.exports.Layer = class Layer
       @ctx.translate -tx, -ty
 
   _applyTransform: ->
-    if @dragable
+    if @draggable
       m = new Matrix()
       m.e = @moveDelta.x
       m.f = @moveDelta.y
@@ -188,9 +186,6 @@ module.exports.Layer = class Layer
     @capturedTransform = @ctx.getTransform()
 
   _drawPredefined: ->
-    if @isHidden
-      return
-
     @ctx.beginPath()
 
     @_applyTransform()
@@ -238,8 +233,8 @@ module.exports.Layer = class Layer
     if @stage isnt null
       @stage.redraw()
 
-  setDragable: (@dragable) ->
-    if @dragable isnt false
+  setDraggable: (@draggable) ->
+    if @draggable isnt false
       @on 'mousedown', @focus
     else
       @off 'mousedown', @focus
@@ -252,9 +247,13 @@ module.exports.Layer = class Layer
 
   removeFromSuperLayer: ->
     @capturedTransform = null
-    @parent?.removeChild this
-    document.body.removeChild @handlerDom if @handlerDom
-    @handlerDom = null
+    if @parent isnt null
+      if @parent instanceof Layer
+        @parent.removeChild this
+      else
+        @parent.removeLayer this
+    @handler?.destroy()
+    @handler = null
     @redraw()
 
   setIsHidden: (@isHidden) ->
@@ -276,29 +275,25 @@ module.exports.Layer = class Layer
     child.parent = this
     @children.push child
     @redraw()
-    return this
 
   addChildBefore: (child, before) ->
     child.parent = this
     Util.aInsertBefore @children, child, before
     @redraw()
-    return this
 
   addChildAfter: (child, after) ->
     child.parent = this
     Util.aInsertAfter @children, child, after
     @redraw()
-    return this
 
   removeChild: (child) ->
+    child.parent = null
     Util.aRemoveEqual @children, child
     @redraw()
-    return this
 
   clearChildren: () ->
     @children = []
     @redraw()
-    return this
 
   containPoint: (x, y) ->
     if @ctx is null

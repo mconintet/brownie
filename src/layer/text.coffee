@@ -11,20 +11,6 @@ module.exports.Text = class Text extends Layer
     @fontSize = '12px'
     @textColor = '#000'
 
-  _drawPredefined: ->
-    super()
-
-    text = @text
-    text = @placeholder if text is ''
-
-    @ctx.font = @fontSize + ' ' + @fontFamily
-    @ctx.fillStyle = @textColor
-
-    textMetrics = @ctx.measureText(text)
-    x = @frame.origin.x
-    y = @frame.origin.y + textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent
-    @ctx.fillTextFlexibly text, x, y, @frame.size.width
-
   setText: (text) ->
     if text is @text
       return
@@ -53,22 +39,36 @@ module.exports.Text = class Text extends Layer
     @textColor = textColor
     @redraw()
 
-  getHandlerDom: ->
-    if @handlerDom is null
+  getHandler: ->
+    if @handler is null
       super()
-      console.log @handlerDom
       text = @text
       text = @placeholder if @text is ''
       textarea = "<textarea>#{ text }</textarea>"
-      textarea = $(@handlerDom).append textarea
+      textarea = @handler.container.append textarea
       me = this
       $(textarea).css {
         width: '100%',
         height: '100%',
         padding: '0',
-        border: '0'
+        border: '0',
+        resize: 'none'
       }
       .on 'blur', ->
-        me.text =  Util.sTrim $(this).val()
+        me.text = Util.sTrim $(this).val()
         me.closeHandler()
-    @handlerDom
+    @handler
+
+  _drawPredefined: ->
+    super()
+
+    text = @text
+    text = @placeholder if text is ''
+
+    @ctx.font = @fontSize + ' ' + @fontFamily
+    @ctx.fillStyle = @textColor
+
+    textMetrics = @ctx.measureText(text)
+    x = @frame.origin.x
+    y = @frame.origin.y + textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent
+    @ctx.fillTextFlexibly text, x, y, @frame.size.width

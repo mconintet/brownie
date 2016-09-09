@@ -72,19 +72,22 @@ module.exports.Stage = class Stage
     @canvas.on 'dblclick', (evt) =>
       @broadcastMouseEvent evt
 
-  _walkLayers: (layers, cb, depth = 0) ->
+  _walkLayers: (layers, cb, depth = 0, skipHidden = true) ->
     if depth > 100
       return
 
     for layer in layers
+      if layer.isHidden and skipHidden
+        continue
+
       if cb(layer, depth) is true
         break
 
       if layer.children.length > 0
-        @_walkLayers layer.children, cb, depth++
+        @_walkLayers layer.children, cb, depth++, skipHidden
 
-  walkLayers: (cb) ->
-    @_walkLayers @layers, cb
+  walkLayers: (cb, skipHidden = true) ->
+    @_walkLayers @layers, cb, skipHidden
 
   getLayerById: (id) ->
     found = null
@@ -97,7 +100,7 @@ module.exports.Stage = class Stage
   broadcastMouseEvent: (evt) ->
     fulfilled = []
     @walkLayers (layer) ->
-      if layer.containPoint evt.x, evt.y
+      if not layer.isHidden and layer.containPoint evt.x, evt.y
         fulfilled.push layer
 
     fulfilled.sort (a, b) ->

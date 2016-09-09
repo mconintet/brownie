@@ -1,3 +1,7 @@
+IndexGenerator = require('./index').IndexGenerator
+
+indexer = new IndexGenerator
+
 module.exports.$ = (selector) ->
   if typeof selector is 'string'
     new Result(document.querySelectorAll(selector))
@@ -8,6 +12,9 @@ tmpDiv = document.createElement 'div'
 
 module.exports.Result = class Result
   constructor: (@nodeList) ->
+
+  get: (i) ->
+    @nodeList[i]
 
   each: (cb) ->
     for node in @nodeList
@@ -42,11 +49,31 @@ module.exports.Result = class Result
         @each (node) ->
           node.style[k] = v
       else
-        @nodeList[0]?.style[k]
+        v = @nodeList[0]?.style[k]?.replace(/(px|pt)$/, '')
+        if /^\d+$/.test v
+          return parseInt v
+        v
     else if typeof k is 'object'
       @each (node) ->
         for own key,val of k
           node.style[key] = val
+
+  data: do ->
+    store = {}
+    (k, v) ->
+      node = @nodeList[0]
+      if node
+        id = node.dataset.__store_id__
+        if id is undefined
+          node.dataset.__store_id__ = indexer.auto()
+
+        if store[id] is undefined
+          store[id] = {}
+
+        if v is undefined
+          store[id][k] ? node.dataset[k]
+        else
+          store[id][k] = v
 
   val: (text) ->
     if text isnt undefined
@@ -54,3 +81,10 @@ module.exports.Result = class Result
         node.value = text
     else
       @nodeList[0]?.value
+
+  find: (selector) ->
+    found = []
+    @each (node) ->
+      for n in node.querySelectorAll(selector)
+        found.push n
+    new Result(found)
