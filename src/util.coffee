@@ -83,3 +83,25 @@ module.exports.Util = class Util
 
   @sTrimR: (str, sep = '\\s') ->
     str.replace(new RegExp(sep + '+$', 'g'), '')
+
+  @aEqual: (a, b) ->
+    if @isArray(a) and @isArray(b)
+      for i, v in a
+        if v isnt b[i]
+          return false
+      true
+    else
+      a is b
+
+  @oEqual: (a, b) ->
+    if @isArray(a) and @isArray(b)
+      @aEqual(a, b)
+    else if typeof a is 'object' and typeof b is 'object'
+      eq = true
+      for own k, v of a
+        eq = @oEqual(v, b[k])
+        if not eq
+          return false
+      true
+    else
+      a is b

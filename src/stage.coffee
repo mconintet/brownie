@@ -27,7 +27,7 @@ module.exports.Stage = class Stage
     @maxZIndex = 0
 
   handleHistoryChanged: ->
-    element = @history.currentElement()
+    element = @history.currentChanges()
     element?.forEach (change) =>
       id = change['id']
       if id?

@@ -1,7 +1,7 @@
 EventProducer = require('./event').EventProducer
 Util = require('./util').Util
 
-module.exports.Element = class Element
+module.exports.Changes = class Changes
   constructor: ->
     @changes = []
 
@@ -28,25 +28,35 @@ module.exports.History = class History
 
     @eventProducer = new EventProducer(this)
 
-  push: (element) ->
+  push: (changes) ->
     if @stack.length is @maxSize
       @stack.shift()
 
-    @stack.push element
+    @stack.push changes
     @forward false
-    element
+    changes
+
+  getLastChange: ->
+    len = @stack.length
+    if len > 0
+      ls = @stack[len - 1]
+      if ls
+        len = ls.changes.length
+        return ls.changes[len - 1] if len > 0
 
   forward: (fire = true) ->
     if @forwardable()
       @currentIndex++
       max = @stack.length - 1
       @currentIndex = max if @currentIndex > max
+      console.log @stack
       @fire('forward') if fire
 
   back: (fire = true) ->
     if @backable()
       @currentIndex--
       @currentIndex = 0 if @currentIndex < 0
+      console.log @stack
       @fire('back') if fire
 
   forwardable: ->
@@ -55,14 +65,14 @@ module.exports.History = class History
   backable: ->
     @currentIndex > 0
 
-  newElement: ->
-    element = new Element()
-    @push element
+  newChanges: ->
+    changes = new Changes()
+    @push changes
+    @currentIndex = @stack.length - 1
 
-  currentElement: ->
+  currentChanges: ->
     if @currentIndex is -1
-      @currentIndex++
-      @newElement()
+      @newChanges()
     else
       @stack[@currentIndex]
 

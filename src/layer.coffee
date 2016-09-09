@@ -95,19 +95,23 @@ module.exports.Layer = class Layer
   closeHandler: ->
     @getHandler().close()
 
-  backupAttr: (attr, newElem = true) ->
+  backupAttr: (attr, newChanges = true) ->
     val = this[attr]
     if val?
-      if newElem
-        @stage.history.newElement()
-
-      elem = @stage.history.currentElement()
-      id = @id
-      elem.push {
-        id: id,
+      last = @stage.history.getLastChange()
+      change = {
+        id: @id,
         attr: attr,
         val: Util.clone(val)
       }
+      if Util.oEqual last, change
+        return
+
+      if newChanges
+        @stage.history.newChanges()
+
+      elem = @stage.history.currentChanges()
+      elem.push change
 
   sync: (change) ->
     this[change['attr']] = change['val']
