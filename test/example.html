@@ -60,6 +60,10 @@
             clear: both;
             margin-top: 10px;
         }
+
+        input[type=text] {
+            width: 80px;
+        }
     </style>
 </head>
 <body>
@@ -76,7 +80,20 @@
                 <button id="history-forward">history forward</button>
             </div>
             <div>
+                <button id="zIndexUp">zIndex up</button>
+                <button id="zIndexDown">zIndex down</button>
                 <button id="bringToFrontend">bring to frontend</button>
+            </div>
+            <div>
+                <button id="btnAddTextLayer">new text layer</button>
+                <select id="select font">
+                    <option value="">choose font</option>
+                </select>
+                <input type="text" placeholder="font size">
+                <input type="text" placeholder="font color">
+            </div>
+            <div>
+                <button id="btnAddImageLayer">new image layer</button>
             </div>
         </fieldset>
     </div>
@@ -91,13 +108,16 @@
         "use strict";
         var canvas = new b.Canvas('#c');
         var stage = canvas.newStage();
+
         var hello = new b.TextLayer(170, 100, 200, 80);
-        hello.text = 'Hello Brownie :)\n';
+        hello.text = 'Hello Brownie :)';
         hello.fontSize = '20px';
         hello.draggable = true;
+
         hello.on('dblclick', function () {
             this.openHandler();
         });
+
         stage.addLayer(hello);
     })(brownie);
 </script>
@@ -106,7 +126,7 @@
     (function (b) {
         window.addEventListener('DOMContentLoaded', function () {
             var src = b.$('#src').get(0).innerText;
-            src = src.replace(/^\s{0,4}/mg, '');
+            src = src.replace(/^\s+/, '').replace(/^ {0,4}/mg, '');
             b.$('pre > code').get(0).innerText = src;
             hljs.initHighlightingOnLoad();
         });
