@@ -184,7 +184,7 @@ module.exports.Layer = class Layer
     else
       if @parent?.capturedTransform?
         m = @parent.capturedTransform
-    @ctx.setTransformWithMatrix m
+    @ctx.setTransformWithMatrix m if m?
 
   captureTransform: ->
     @capturedTransform = @ctx.getTransform()
