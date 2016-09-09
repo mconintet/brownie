@@ -16,6 +16,15 @@ This is a canvas toolkit in coffeescript, it can be used to build a static image
 - [x] double click on layer
 - [x] editable text layer
 - [x] auto line breaks
+- [ ] attributed string for text layer
+- [ ] mask to bounds
+
+## Usage
+
+1. clone this repo
+2. run `npm install` under repo directory
+3. run `cake build` to build
+4. open `test/example.html` to view the examples
 
 ## Licence
 

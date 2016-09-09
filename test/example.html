@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>brownie | test&demo</title>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <link rel="stylesheet" href="//cdn.staticfile.org/highlight.js/9.0.0/styles/tomorrow-night.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font: 12px Monaco, Consolas, "Lucida Console", monospace;
+        }
+
+        #c {
+            border: 1px solid #000;
+        }
+
+        #viewport {
+            padding: 10px;
+            width: 1080px;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        fieldset {
+            display: block;
+            padding: 10px;
+        }
+
+        fieldset > div {
+            margin-bottom: 10px;
+        }
+
+        button {
+            font-size: 12px;
+            height: 30px;
+            padding: 0 8px;
+        }
+
+        #viewport > .left {
+            width: 40%;
+            float: left;
+        }
+
+        #viewport > .right {
+            width: 52%;
+            float: right;
+        }
+
+        div.clear {
+            clear: both;
+        }
+
+        pre {
+            clear: both;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="viewport">
+    <div class="left">
+        <canvas id="c" width="500" height="300"></canvas>
+    </div>
+    <div class="right">
+        <fieldset>
+            <legend>Tools</legend>
+            <div>
+                <button id="history-back">history back</button>
+                <button id="history-forward">history forward</button>
+            </div>
+            <div>
+                <button id="bringToFrontend">bring to frontend</button>
+            </div>
+        </fieldset>
+    </div>
+    <div class="clear"></div>
+    <pre><code class="js"></code></pre>
+</div>
+<script src="//cdn.staticfile.org/highlight.js/9.0.0/highlight.min.js"></script>
+<script src="../dist/js/brownie.min.js"></script>
+
+<script id="src">
+    (function (b) {
+        "use strict";
+        var canvas = new b.Canvas('#c');
+        var stage = canvas.newStage();
+        var hello = new b.TextLayer(170, 100, 200, 80);
+        hello.text = 'Hello Brownie :)\n';
+        hello.fontSize = '20px';
+        hello.draggable = true;
+        hello.on('dblclick', function () {
+            this.openHandler();
+        });
+        stage.addLayer(hello);
+    })(brownie);
+</script>
+
+<script>
+    (function (b) {
+        window.addEventListener('DOMContentLoaded', function () {
+            var src = b.$('#src').get(0).innerText;
+            src = src.replace(/^\s{0,4}/mg, '');
+            b.$('pre > code').get(0).innerText = src;
+            hljs.initHighlightingOnLoad();
+        });
+    })(brownie);
+</script>
+</body>
+</html>

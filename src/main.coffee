@@ -15,3 +15,4 @@ window.brownie =
   Matrix: require('./matrix').Matrix
   ImageLayer: require('./layer/image').Image
   TextLayer: require('./layer/text').Text
+  $: require('./dom').$

@@ -67,8 +67,8 @@ module.exports.Layer = class Layer
     @handler = null
 
   syncByWindowPosition: ->
+    m = new Matrix()
     if @draggable
-      m = new Matrix()
       m.e = @moveDelta.x
       m.f = @moveDelta.y
       if @parent?.capturedTransform?
