@@ -125,7 +125,7 @@ module.exports.Stage = class Stage
 
     if zIndexed.length > 0
       zIndexed.sort (a, b) ->
-        return b.zIndex - a.zIndex
+        return a.zIndex - b.zIndex
 
       zIndexed.forEach (layer) ->
         layer.draw()
