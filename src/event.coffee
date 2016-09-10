@@ -52,6 +52,8 @@ module.exports.EventProducer = class EventProducer
     once = []
 
     for listener in ls
+      if typeof listener isnt 'function'
+        continue
       stop = listener.call @context, data
       if listener.__fire_once__ is true
         once.push listener

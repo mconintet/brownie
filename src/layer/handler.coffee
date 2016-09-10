@@ -3,6 +3,8 @@ Canvas = require('../canvas').Canvas
 
 module.exports.Handler = class Handler
   constructor: (@layer) ->
+    @isOpen = false
+
     @_prepareContainer()
     @_prepareBtnMove()
     @_prepareBtnRotate()
@@ -10,7 +12,7 @@ module.exports.Handler = class Handler
     @_prepareBtnResize()
 
   _prepareContainer: ->
-    div = "<div id='b-layer-handler-#{ @id } b-layer-handler'>
+    div = "<div id='b-layer-handler-#{ @layer.id } b-layer-handler'>
 <i class='fa fa-arrows move'></i>
 <i class='fa fa-arrows-h resize'></i>
 <i class='fa fa-repeat rotate'></i>
@@ -31,9 +33,13 @@ module.exports.Handler = class Handler
     @btnMove.css {
       position: 'absolute',
       fontSize: '14px',
-      left: '-17px',
+      left: '-19px',
       top: '-12px',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      width: '20px',
+      height: '20px',
+      textAlign: 'center',
+      lineHeight: '20px',
     }
     me = this
     @btnMove.on 'mousedown', (evt) =>
@@ -72,10 +78,14 @@ module.exports.Handler = class Handler
     @btnDelete = @container.find('i.delete')
     @btnDelete.css {
       position: 'absolute',
-      fontSize: '14px',
-      left: '-17px',
+      fontSize: '15px',
+      left: '-19px',
       bottom: '-12px',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      width: '20px',
+      height: '20px',
+      textAlign: 'center',
+      lineHeight: '20px',
     }
     @btnDelete.on 'click', =>
       @close()
@@ -86,9 +96,13 @@ module.exports.Handler = class Handler
     @btnRotate.css {
       position: 'absolute',
       fontSize: '14px'
-      right: '-16px',
+      right: '-20px',
       top: '-12px',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      width: '20px',
+      height: '20px',
+      textAlign: 'center',
+      lineHeight: '20px',
     }
 
     @btnRotate.on 'mousedown', (evt) =>
@@ -150,10 +164,14 @@ module.exports.Handler = class Handler
     @btnResize.css {
       position: 'absolute',
       fontSize: '14px',
-      right: '-17px',
-      bottom: '-9px',
+      right: '-19px',
+      bottom: '-12px',
       transform: 'rotate(44deg)',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      width: '20px',
+      height: '20px',
+      textAlign: 'center',
+      lineHeight: '20px',
     }
 
     @btnResize.on 'mousedown', (evt) =>
@@ -182,7 +200,7 @@ module.exports.Handler = class Handler
         @layer.resize nw, nh
 
   open: ->
-    if @layer.parent is null
+    if @layer.parent is null or @isOpen
       return
     @layer.syncByWindowPosition()
     @container.css {
@@ -191,12 +209,22 @@ module.exports.Handler = class Handler
       left: @layer.byWindowPosition.x + 'px',
     }
     @layer.setIsHidden true
+    @isOpen = true
+
+    me = this
+    @_close = ->
+      if me.isOpen
+        me.close()
+        me.layer.stage.canvas.off 'click', me._close
+
+    @layer.stage.canvas.on 'click', @_close
 
   close: ->
-    if @layer.parent is null
+    if @layer.parent is null or not @isOpen
       return
     @container.css 'display', 'none'
     @layer.setIsHidden false
+    @isOpen = false
 
   destroy: ->
     document.body.removeChild @container.get(0)

@@ -59,6 +59,9 @@ module.exports.Stage = class Stage
     @layers = []
     @redraw()
 
+  closeLayerHandler: ->
+    @focusingLayer?.closeHandler()
+
   bindEvent: ->
     @canvas.on 'mousedown', (evt) =>
       @broadcastMouseEvent evt
@@ -111,7 +114,8 @@ module.exports.Stage = class Stage
       bubbling = false
       listeners.forEach (listener) ->
         bubbling = listener.call layer, evt.name, evt
-      return bubbling is true
+      bubbling is true
+    false
 
   _draw: ->
     zIndexed = []

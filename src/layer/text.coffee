@@ -56,7 +56,6 @@ module.exports.Text = class Text extends Layer
       }
       .on 'blur', ->
         me.text = Util.sTrim $(this).val()
-        me.closeHandler()
     @handler
 
   _drawPredefined: ->

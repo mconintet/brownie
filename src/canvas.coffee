@@ -111,5 +111,8 @@ module.exports.Canvas = class Canvas
   fire: (event, data) ->
     @eventProducer.fire event, data
 
+  listenersOf: (event) ->
+    @eventProducer.listenersOf event
+
   hasEvent: (event) ->
     @eventProducer.has event

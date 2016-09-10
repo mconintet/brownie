@@ -36,6 +36,10 @@
             margin-bottom: 10px;
         }
 
+        fieldset > div:last-child {
+            margin-bottom: 0;
+        }
+
         button {
             font-size: 12px;
             height: 30px;
@@ -82,7 +86,7 @@
             <div>
                 <button id="zIndexUp">zIndex up</button>
                 <button id="zIndexDown">zIndex down</button>
-                <button id="bringToFrontend">bring to frontend</button>
+                <button id="bringToFront">bring to front</button>
             </div>
             <div>
                 <button id="btnAddTextLayer">new text layer</button>
@@ -94,6 +98,9 @@
             </div>
             <div>
                 <button id="btnAddImageLayer">new image layer</button>
+            </div>
+            <div>
+                <button id="btnSaveAs">save as</button>
             </div>
         </fieldset>
     </div>
@@ -112,13 +119,49 @@
         var hello = new b.TextLayer(170, 100, 200, 80);
         hello.text = 'Hello Brownie :)';
         hello.fontSize = '20px';
-        hello.draggable = true;
-
-        hello.on('dblclick', function () {
-            this.openHandler();
-        });
+        hello.enableHandler();
 
         stage.addLayer(hello);
+
+        var layer = new b.Layer(10, 10, 50, 50);
+        layer.borderWidth = 1;
+        layer.enableHandler();
+
+        stage.addLayer(layer);
+        window.stage = stage;
+
+        var btnHistoryBack = b.$('#history-back');
+        var btnHistoryForward = b.$('#history-forward');
+
+        btnHistoryBack.on('click', function () {
+            stage.history.back();
+        });
+
+        btnHistoryForward.on('click', function () {
+            stage.history.forward();
+        });
+
+        var btnZIndexUp = b.$('#zIndexUp');
+        var btnZIndexDown = b.$('#zIndexDown');
+        var btnBringToFront = b.$('#bringToFront');
+
+        btnZIndexUp.on('click', function () {
+            if (stage.focusingLayer) {
+                stage.focusingLayer.zIndexUp();
+            }
+        });
+
+        btnZIndexDown.on('click', function () {
+            if (stage.focusingLayer) {
+                stage.focusingLayer.zIndexDown();
+            }
+        });
+
+        btnBringToFront.on('click', function () {
+            if (stage.focusingLayer) {
+                stage.focusingLayer.bringToFront();
+            }
+        });
     })(brownie);
 </script>
 

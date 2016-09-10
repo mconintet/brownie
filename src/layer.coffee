@@ -66,6 +66,33 @@ module.exports.Layer = class Layer
 
     @handler = null
 
+    @handlerOpenTrigger = 'click'
+
+  enableHandler: (enable = true) ->
+    if enable
+      @focusable = true if not @focusable
+      @draggable = true if not @draggable
+
+      if @handlerOpenTrigger is 'click'
+        this.on 'click', @openHandler
+      else if @handlerOpenTrigger is 'dblclick'
+        this.on 'dblclick', @openHandler
+    else
+      if @handlerOpenTrigger is 'click'
+        this.off 'click', @openHandler
+      else if @handlerOpenTrigger is 'dblclick'
+        this.off 'dblclick', @openHandler
+
+  zIndexUp: ->
+    @zIndex++
+    @redraw()
+
+  zIndexDown: ->
+    if @zIndex is 0
+      return
+    @zIndex--
+    @redraw()
+
   syncByWindowPosition: ->
     m = new Matrix()
     if @draggable
@@ -237,8 +264,9 @@ module.exports.Layer = class Layer
     if @stage isnt null
       @stage.redraw()
 
-  setDraggable: (@draggable) ->
-    if @draggable isnt false
+  enableDragWithoutHandler: (enable = true) ->
+    if enable
+      @draggable = true if not @draggable
       @on 'mousedown', @focus
     else
       @off 'mousedown', @focus
@@ -248,7 +276,7 @@ module.exports.Layer = class Layer
     @frame.size.height = nh
     @redraw()
 
-  bringToFrontend: ->
+  bringToFront: ->
     @backupAttr 'zIndex'
     @zIndex = @stage.maxZIndex + 1
     @backupAttr 'zIndex'
