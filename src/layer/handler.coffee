@@ -212,6 +212,7 @@ module.exports.Handler = class Handler
     @layer.stage.focusingLayer = @layer
 
     @layer.syncByWindowPosition()
+    console.log @layer.byWindowPosition.y
     @container.css {
       display: 'block',
       width: @layer.frame.size.width + 'px',

@@ -88,3 +88,19 @@ module.exports.Result = class Result
       for n in node.querySelectorAll(selector)
         found.push n
     new Result(found)
+
+module.exports.pageXOffset = do ->
+  if window.pageXOffset?
+    ->
+      window.pageXOffset
+  else
+    ->
+      (document.documentElement || document.body.parentNode || document.body).scrollLeft
+
+module.exports.pageYOffset = do ->
+  if window.pageYOffset?
+    ->
+      window.pageYOffset
+  else
+    ->
+      (document.documentElement || document.body.parentNode || document.body).scrollTop

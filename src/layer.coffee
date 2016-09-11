@@ -6,6 +6,7 @@ Canvas = require('./canvas').Canvas
 Point = require('./point').Point
 Matrix = require('./matrix').Matrix
 $ = require('./dom').$
+pageYOffset = require('./dom').pageYOffset
 Handler = require('./layer/handler').Handler
 
 module.exports.Layer = class Layer
@@ -108,7 +109,7 @@ module.exports.Layer = class Layer
 
     rect = $(@stage?.canvas.raw).boundRect()
     x = rect.left
-    y = rect.top + window.scrollY
+    y = rect.top + pageYOffset()
     @byWindowPosition.x = x + @byCanvasPosition.x + m.e / Canvas.devicePixelRatio
     @byWindowPosition.y = y + @byCanvasPosition.y + m.f / Canvas.devicePixelRatio
 

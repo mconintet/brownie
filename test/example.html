@@ -116,8 +116,9 @@
 <script src="canvas2image.js"></script>
 
 <script id="src">
-    (function (b) {
+    var app = function (b) {
         "use strict";
+
         var canvas = new b.Canvas('#c');
         var stage = canvas.newStage();
 
@@ -220,14 +221,16 @@
         btnSaveAs.on('click', function () {
             canvas.saveAs('hello brownie');
         });
-    })(brownie);
+    };
+    app(brownie);
 </script>
 
 <script>
     (function (b) {
         window.addEventListener('DOMContentLoaded', function () {
-            var src = b.$('#src').get(0).innerText;
-            src = src.replace(/^\s+/, '').replace(/^ {0,4}/mg, '');
+            var src = app.toString();
+            src = src.slice(src.indexOf('{') + 1, src.lastIndexOf('}'));
+            src = src.replace(/^\s+/, '').replace(/^( {0,4}|\t)/mg, '').replace(/^ {0,4}/mg, '');
             b.$('pre > code').get(0).innerText = src;
             hljs.initHighlightingOnLoad();
         });
