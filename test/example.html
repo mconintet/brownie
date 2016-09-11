@@ -113,6 +113,7 @@
 <script src="//cdn.staticfile.org/highlight.js/9.0.0/highlight.min.js"></script>
 <script src="../dist/js/brownie.min.js"></script>
 <script src="FileSaver.min.js"></script>
+<script src="canvas2image.js"></script>
 
 <script id="src">
     (function (b) {
@@ -120,7 +121,7 @@
         var canvas = new b.Canvas('#c');
         var stage = canvas.newStage();
 
-        var hello = new b.TextLayer(180, 20, 153, 29);
+        var hello = new b.TextLayer(180, 10, 153, 29);
         hello.text = 'Hello Brownie :)';
         hello.fontSize = '20px';
         hello.fontFamily = 'Comic Sans MS';
@@ -217,9 +218,7 @@
 
         var btnSaveAs = b.$('#btnSaveAs');
         btnSaveAs.on('click', function () {
-            canvas.raw.toBlob(function (blob) {
-                saveAs(blob, "hello brownie.jpg");
-            });
+            canvas.saveAs('hello brownie');
         });
     })(brownie);
 </script>

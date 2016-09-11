@@ -9,6 +9,7 @@ _setTransform = proto.setTransform
 
 _save = proto.save
 _restore = proto.restore
+_measureText = proto.measureText
 
 proto._currentTransform = new Matrix
 proto._tramsformStack = []
@@ -51,9 +52,26 @@ proto.transform = (a, b, c, d, e, f) ->
 proto.getTransform = ->
   return @_currentTransform
 
+_calcDiv = document.createElement('div')
+_calcDiv.style.position = 'absolute'
+_calcDiv.style.left = '-1000px'
+_calcDiv.style.top = '-1000px'
+_calcDiv.style.padding = 0
+document.body.appendChild _calcDiv
+
+proto.measureText = (text) ->
+    [fontSize, fontFamily...] = @font.split(/\s+/)
+    _calcDiv.style.fontSize = fontSize
+    _calcDiv.style.fontFamily = fontFamily.join(' ')
+    _calcDiv.innerText = text
+    {
+      width: _calcDiv.clientWidth,
+      height: _calcDiv.clientHeight
+    }
+
 proto.fillTextFlexibly = (text, x, y, maxWidth, lineHeight = 0) ->
   t = @measureText('t')
-  fontHeight = t.actualBoundingBoxAscent + t.actualBoundingBoxDescent
+  fontHeight = t.height
   paddingVertical = 2
   if lineHeight < fontHeight
     lineHeight = fontHeight + paddingVertical * 2

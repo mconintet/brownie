@@ -168,8 +168,8 @@ module.exports.Layer = class Layer
     @redraw()
 
   move: (x = 0, y = 0) ->
-    @moveDelta.x += x;
-    @moveDelta.y += y;
+    @moveDelta.x += x
+    @moveDelta.y += y
     @redraw()
 
   moveLeft: (x = 1) ->

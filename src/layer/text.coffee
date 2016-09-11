@@ -86,7 +86,7 @@ module.exports.Text = class Text extends Layer
     @ctx.font = @fontSize + ' ' + @fontFamily
     @ctx.fillStyle = @textColor
 
-    textMetrics = @ctx.measureText(text)
+    tm = @ctx.measureText(text)
     x = @frame.origin.x
-    y = @frame.origin.y + textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent
+    y = @frame.origin.y + tm.height
     @ctx.fillTextFlexibly text, x, y, @frame.size.width

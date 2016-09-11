@@ -14,7 +14,7 @@ module.exports.Image = class Image extends Layer
 
     @image.src = @src if @src isnt ''
 
-    @imageLoaded = false;
+    @imageLoaded = false
 
   onImageLoaded: ->
     @imageLoaded = true

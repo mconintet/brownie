@@ -116,3 +116,20 @@ module.exports.Canvas = class Canvas
 
   hasEvent: (event) ->
     @eventProducer.has event
+
+  toBlob: (type, encoderOptions) ->
+    du = @raw.toDataURL type, encoderOptions
+    data = du.split(',')[1]
+    bs = atob(data)
+    b = new ArrayBuffer(bs.length)
+    bv = new Uint8Array(b)
+    for c,i in bs
+      bv[i] = bs.charCodeAt(i)
+    new Blob([b], {type: 'image/octet-stream'})
+
+  saveAs: (filename) ->
+    if 'toBlob' of @raw
+      @raw.toBlob (blob) ->
+        saveAs(blob, filename + '.png')
+    else
+      Canvas2Image.saveAsImage(@raw, @raw.width, @raw.height, 'png')
