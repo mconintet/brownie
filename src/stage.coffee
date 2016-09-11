@@ -18,26 +18,58 @@ module.exports.Stage = class Stage
     @history = new History
 
     @history.on 'forward', =>
-      console.log 'forward'
       @handleHistoryChanged()
 
     @history.on 'back', =>
-      @handleHistoryChanged()
+      @handleHistoryChanged false
 
     @maxZIndex = 0
 
-  handleHistoryChanged: ->
-    element = @history.currentChanges()
-    element?.forEach (change) =>
-      id = change['id']
-      if id?
-        layer = @getLayerById id
-        layer.sync change
-    @redraw() if element?
+  handleHistoryChanged: (forward = true) ->
+    changes = @history.currentChanges()
+    changes?.forEach (change) =>
+      action = change['action']
+      if action
+        switch action
+          when 'add'
+            if forward
+              @addLayer change['layer'], false
+            else
+              @removeLayer change['layer'], false
+          when 'del'
+            if forward
+              @removeLayer change['layer'], false
+            else
+              @addLayer change['layer'], false
+      else
+        id = change['id']
+        if id?
+          layer = @getLayerById id
+          layer.closeHandler()
+          layer.sync change
+          @redraw()
 
-  addLayer: (layer) ->
+  _backupAdding: (layer) ->
+    change = {
+      action: 'add',
+      layer: layer
+    }
+    changes = @history.newChanges()
+    changes.push change
+
+  _backupRemoving: (layer) ->
+    change = {
+      action: 'del',
+      layer: layer
+    }
+    changes = @history.newChanges()
+    changes.push change
+
+  addLayer: (layer, history = true) ->
     layer.parent = this
     @layers.push layer
+    if history
+      @_backupAdding layer
     @redraw()
 
   addLayerBefore: (layer, before) ->
@@ -50,9 +82,11 @@ module.exports.Stage = class Stage
     Util.aInsertAfter @layers, layer, after
     @redraw()
 
-  removeLayer: (layer) ->
+  removeLayer: (layer, history = true) ->
     layer.parent = null
     Util.aRemoveEqual @layers, layer
+    if history
+      @_backupRemoving layer
     @redraw()
 
   clearLayers: ->
@@ -90,7 +124,7 @@ module.exports.Stage = class Stage
         @_walkLayers layer.children, cb, depth++, skipHidden
 
   walkLayers: (cb, skipHidden = true) ->
-    @_walkLayers @layers, cb, skipHidden
+    @_walkLayers @layers, cb, 0, skipHidden
 
   getLayerById: (id) ->
     found = null
@@ -98,6 +132,7 @@ module.exports.Stage = class Stage
       if layer.id is id
         found = layer
         return true
+    , false
     found
 
   broadcastMouseEvent: (evt) ->

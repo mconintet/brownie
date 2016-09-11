@@ -11,11 +11,15 @@ module.exports.Text = class Text extends Layer
     @fontSize = '12px'
     @textColor = '#000'
 
+    @backgroundColor = 'rgba(255, 255, 255, 0)'
+
   setText: (text) ->
     if text is @text
       return
 
+    @backupAttr 'text'
     @text = text
+    @backupAttr 'text'
     @redraw()
 
   setPlaceholder: (placeholder) ->
@@ -29,14 +33,27 @@ module.exports.Text = class Text extends Layer
     if fontFamily is @fontFamily
       return
 
+    @backupAttr 'fontFamily'
     @fontFamily = fontFamily
+    @backupAttr 'fontFamily'
+    @redraw()
+
+  setFontSize: (fontSize) ->
+    if fontSize is @fontSize
+      return
+
+    @backupAttr 'fontSize'
+    @fontSize = fontSize
+    @backupAttr 'fontSize'
     @redraw()
 
   setTextColor: (textColor)->
     if textColor is @textColor
       return
 
+    @backupAttr 'textColor'
     @textColor = textColor
+    @backupAttr 'textColor'
     @redraw()
 
   getHandler: ->
@@ -55,7 +72,9 @@ module.exports.Text = class Text extends Layer
         resize: 'none'
       }
       .on 'blur', ->
+        me.backupAttr 'text'
         me.text = Util.sTrim $(this).val()
+        me.backupAttr 'text'
     @handler
 
   _drawPredefined: ->

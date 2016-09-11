@@ -137,8 +137,9 @@ module.exports.Layer = class Layer
       if newChanges
         @stage.history.newChanges()
 
-      elem = @stage.history.currentChanges()
-      elem.push change
+      changes = @stage.history.currentChanges()
+      console.log changes
+      changes?.push change
 
   sync: (change) ->
     this[change['attr']] = change['val']
@@ -156,9 +157,10 @@ module.exports.Layer = class Layer
     @redraw()
 
   blur: ->
-    @stage.focusingLayer = null
-    @focusing = false
-    @redraw()
+    if @stage.focusingLayer is @
+      @stage.focusingLayer = null
+      @focusing = false
+      @redraw()
 
   moveTo: (x, y) ->
     @moveDelta.x = x

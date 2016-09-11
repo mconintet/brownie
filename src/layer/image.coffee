@@ -7,6 +7,7 @@ module.exports.Image = class Image extends Layer
     super(x, y, width, height)
 
     @image = new _Image()
+    @image.crossOrigin = "anonymous"
 
     @image.onload = =>
       @onImageLoaded()

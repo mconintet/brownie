@@ -46,35 +46,31 @@ module.exports.History = class History
 
   forward: (fire = true) ->
     if @forwardable()
-      @currentIndex++
-      max = @stack.length - 1
-      @currentIndex = max if @currentIndex > max
-      console.log @stack
+      @currentIndex = 0 if @currentIndex < 0
       @fire('forward') if fire
+      @currentIndex++
 
   back: (fire = true) ->
     if @backable()
-      @currentIndex--
-      @currentIndex = 0 if @currentIndex < 0
-      console.log @stack
+      max = @stack.length - 1
+      @currentIndex = max if @currentIndex > max
       @fire('back') if fire
+      @currentIndex--
 
   forwardable: ->
-    @currentIndex < @stack.length - 1
+    @currentIndex < @stack.length
 
   backable: ->
-    @currentIndex > 0
+    @currentIndex > -1
 
   newChanges: ->
     changes = new Changes()
     @push changes
     @currentIndex = @stack.length - 1
+    changes
 
   currentChanges: ->
-    if @currentIndex is -1
-      @newChanges()
-    else
-      @stack[@currentIndex]
+    @stack[@currentIndex]
 
   on: (event, listener) ->
     @eventProducer.on event, listener

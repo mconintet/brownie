@@ -49,6 +49,7 @@ module.exports.Handler = class Handler
         top: me.container.css('top')
       }
       @movePrevPoint = [evt.clientX, evt.clientY]
+      @layer.backupAttr 'moveDelta'
 
     $(document).on 'mousemove', (evt) =>
       if @moveable
@@ -73,6 +74,7 @@ module.exports.Handler = class Handler
         dx = left - begin.left
         dy = top - begin.top
         @layer.move dx * Canvas.devicePixelRatio, dy * Canvas.devicePixelRatio
+        @layer.backupAttr 'moveDelta'
 
   _prepareBtnDelete: ->
     @btnDelete = @container.find('i.delete')
@@ -118,6 +120,7 @@ module.exports.Handler = class Handler
       @rotateCenter = [cx, cy]
       @rotatable = true
       @rotatePrev = 0
+      @layer.backupAttr 'rotate'
 
     $(document).on 'mousemove', (evt) =>
       if @rotatable
@@ -158,6 +161,7 @@ module.exports.Handler = class Handler
       if @rotatable
         @rotatable = false
         @layer.setRotate @rotate
+        @layer.backupAttr 'rotate'
 
   _prepareBtnResize: ->
     @btnResize = @container.find('i.resize')
@@ -177,6 +181,7 @@ module.exports.Handler = class Handler
     @btnResize.on 'mousedown', (evt) =>
       @resizeable = true
       @saleablePrev = [evt.clientX, evt.clientY]
+      @layer.backupAttr 'frame'
 
     $(document).on 'mousemove', (evt) =>
       if @resizeable
@@ -198,13 +203,20 @@ module.exports.Handler = class Handler
         nw = @container.css('width')
         nh = @container.css('height')
         @layer.resize nw, nh
+        @layer.backupAttr 'frame'
 
   open: ->
     if @layer.parent is null or @isOpen
       return
+
+    @layer.stage.focusingLayer = @layer
+
     @layer.syncByWindowPosition()
     @container.css {
       display: 'block',
+      width: @layer.frame.size.width + 'px',
+      height: @layer.frame.size.height + 'px',
+      transform: 'rotate(0deg)',
       top: @layer.byWindowPosition.y + 'px',
       left: @layer.byWindowPosition.x + 'px',
     }
@@ -222,6 +234,10 @@ module.exports.Handler = class Handler
   close: ->
     if @layer.parent is null or not @isOpen
       return
+
+    if @_close
+      @layer.stage.canvas.off 'click', @_close
+    @layer.blur()
     @container.css 'display', 'none'
     @layer.setIsHidden false
     @isOpen = false
