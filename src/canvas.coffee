@@ -4,7 +4,7 @@ Event = require('./event').Event
 EventProducer = require('./event').EventProducer
 
 module.exports.Canvas = class Canvas
-  @devicePixelRatio: window.devicePixelRatio
+  @devicePixelRatio: window.devicePixelRatio ? 1
   @isHighDPI: @devicePixelRatio > 1
 
   constructor: (@raw)->
