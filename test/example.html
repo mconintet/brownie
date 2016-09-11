@@ -90,11 +90,14 @@
             </div>
             <div>
                 <button id="btnAddTextLayer">new text layer</button>
-                <select id="select font">
+                <select id="fontFamily">
                     <option value="">choose font</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Comic Sans MS" selected="selected">Comic Sans MS</option>
                 </select>
-                <input type="text" placeholder="font size">
-                <input type="text" placeholder="font color">
+                <input id="fontSize" type="text" placeholder="font size" value="12px">
+                <input id="textColor" type="text" placeholder="font color" value="#007CFF">
             </div>
             <div>
                 <button id="btnAddImageLayer">new image layer</button>
@@ -109,6 +112,7 @@
 </div>
 <script src="//cdn.staticfile.org/highlight.js/9.0.0/highlight.min.js"></script>
 <script src="../dist/js/brownie.min.js"></script>
+<script src="FileSaver.min.js"></script>
 
 <script id="src">
     (function (b) {
@@ -116,19 +120,20 @@
         var canvas = new b.Canvas('#c');
         var stage = canvas.newStage();
 
-        var hello = new b.TextLayer(170, 100, 200, 80);
+        var hello = new b.TextLayer(180, 20, 153, 29);
         hello.text = 'Hello Brownie :)';
         hello.fontSize = '20px';
+        hello.fontFamily = 'Comic Sans MS';
+        hello.textColor = '#fff';
+        hello.zIndex = 1;
         hello.enableHandler();
 
         stage.addLayer(hello);
 
-        var layer = new b.Layer(10, 10, 50, 50);
-        layer.borderWidth = 1;
-        layer.enableHandler();
-
-        stage.addLayer(layer);
-        window.stage = stage;
+        var cake = new b.ImageLayer(140, 10, 230, 280,
+                'http://58.96.180.32/Nutella-Brownies-011.jpg');
+        cake.enableHandler();
+        stage.addLayer(cake);
 
         var btnHistoryBack = b.$('#history-back');
         var btnHistoryForward = b.$('#history-forward');
@@ -161,6 +166,60 @@
             if (stage.focusingLayer) {
                 stage.focusingLayer.bringToFront();
             }
+        });
+
+        var btnAddTextLayer = b.$('#btnAddTextLayer');
+        var fontFamily = b.$('#fontFamily');
+        var fontSize = b.$('#fontSize');
+        var textColor = b.$('#textColor');
+        btnAddTextLayer.on('click', function () {
+            var layer = new b.TextLayer(10, 10, 100, 100);
+            layer.fontFamily = fontFamily.val();
+            layer.fontSize = fontSize.val();
+            layer.textColor = textColor.val();
+            layer.enableHandler();
+            stage.addLayer(layer);
+        });
+
+        fontSize.on('blur', function () {
+            var layer = stage.focusingLayer;
+            if (layer instanceof b.TextLayer) {
+                layer.setFontSize(this.value);
+            }
+        });
+
+        fontFamily.on('blur', function () {
+            var layer = stage.focusingLayer;
+            if (layer instanceof b.TextLayer) {
+                layer.setFontFamily(this.value);
+            }
+        });
+
+        textColor.on('blur', function () {
+            var layer = stage.focusingLayer;
+            if (layer instanceof b.TextLayer) {
+                layer.setTextColor(this.value);
+            }
+        });
+
+        var btnAddImageLayer = b.$('#btnAddImageLayer');
+        btnAddImageLayer.on('click', function () {
+            var src = prompt('Please input image src', '');
+            var reg = /^((ftp|http|https):)\/\/([a-zA-Z0-9.-]+)(:(\d+))?(\/[^?#]+)?(\?([^#]*))?(#(.*))?$/;
+            if (reg.test(src)) {
+                var layer = new b.ImageLayer(10, 10, 100, 100, src);
+                layer.enableHandler();
+                stage.addLayer(layer);
+            } else {
+                alert('deformed url');
+            }
+        });
+
+        var btnSaveAs = b.$('#btnSaveAs');
+        btnSaveAs.on('click', function () {
+            canvas.raw.toBlob(function (blob) {
+                saveAs(blob, "hello brownie.jpg");
+            });
         });
     })(brownie);
 </script>
