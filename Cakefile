@@ -25,7 +25,7 @@ task 'build', 'build', (options) ->
   .pipe uglify()
   .on 'error', gutil.log
   .pipe sourcemaps.write './'
-  .pipe size title: 'coffee → javascript', showFiles: yes, gzip: yes
+  .pipe size title: 'coffee → javascript', showFiles: yes, gzip: no
   .pipe gulp.dest './dist/js/'
   .pipe gzip()
   .pipe gulp.dest './dist/js/'
