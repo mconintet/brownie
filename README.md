@@ -1,7 +1,7 @@
 ## Brownie
 This is a canvas toolkit in coffeescript, it can be used to build a static image/text designer.
 
-[demo](http://brownie.com/test/example.html)
+[demo](http://browniecake.net/brownie/test/example.html)
 
 ## Features
 - [x] high-dpi
