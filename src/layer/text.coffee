@@ -28,6 +28,7 @@ module.exports.Text = class Text extends Layer
 
   execCmdOnAllTextareaChildren: (cmd, arg) ->
     sel = Selection.save()
+    sel.removeAllRanges()
     range = document.createRange()
     range.selectNodeContents @textarea
     sel.addRange range
