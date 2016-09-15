@@ -53,7 +53,7 @@ module.exports.Result = class Result
           node.style[k] = v
       else
         v = @nodeList[0]?.style[k]?.replace(/(px|pt)$/, '')
-        if /^[0-9.]+$/.test v
+        if /^-?[0-9.]+$/.test v
           return parseInt v
         v
     else if typeof k is 'object'
