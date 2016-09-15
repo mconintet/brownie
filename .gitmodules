@@ -1,0 +1,6 @@
+[submodule "test/libs/FileSaver"]
+	path = test/libs/FileSaver
+	url = https://github.com/eligrey/FileSaver.js.git
+[submodule "test/libs/canvas2image"]
+	path = test/libs/canvas2image
+	url = https://github.com/hongru/canvas2image.git

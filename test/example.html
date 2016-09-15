@@ -119,8 +119,8 @@
 </div>
 <script src="//cdn.staticfile.org/highlight.js/9.0.0/highlight.min.js"></script>
 <script src="../dist/js/brownie.min.js"></script>
-<script src="FileSaver.min.js"></script>
-<script src="canvas2image.js"></script>
+<script src="libs/FileSaver/FileSaver.min.js"></script>
+<script src="libs/canvas2image/canvas2image.js"></script>
 
 <script id="src">
     var app = function (b) {
@@ -182,7 +182,7 @@
         var fontFamily = b.$('#fontFamily');
         var fontSize = b.$('#fontSize');
         var textColor = b.$('#textColor');
-        
+
         btnAddTextLayer.on('click', function () {
             var layer = new b.TextLayer(10, 10, 100, 100);
             layer.fontFamily = fontFamily.val();
