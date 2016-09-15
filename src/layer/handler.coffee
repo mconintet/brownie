@@ -217,8 +217,8 @@ module.exports.Handler = class Handler
     top = @layer.byWindowPosition.y
     left = @layer.byWindowPosition.x
 
+    # calc drawing size if border is set
     if @layer.borderWidth > 0
-      # calc drawing size if border is set
       width -= @layer.borderWidth
       height -= @layer.borderWidth
       top += @layer.borderWidth / 2
