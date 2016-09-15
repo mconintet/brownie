@@ -111,3 +111,12 @@ module.exports.pageYOffset = do ->
   else
     ->
       (document.documentElement || document.body.parentNode || document.body).scrollTop
+
+module.exports.addCssRule = do ->
+  styleEl = document.createElement('style')
+  document.head.appendChild(styleEl)
+  styleSheet = styleEl.sheet
+
+  (rule) ->
+    rules = styleSheet.cssRules
+    styleSheet.insertRule rule, rules.length

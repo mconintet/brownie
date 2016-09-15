@@ -15,7 +15,7 @@ module.exports.Handler = class Handler
     @eventProducer = new EventProducer(this)
 
   _prepareContainer: ->
-    div = "<div id='b-layer-handler-#{ @layer.id } b-layer-handler'>
+    div = "<div id='b-layer-handler-#{ @layer.id }' class='b-layer-handler'>
 <i class='fa fa-arrows move'></i>
 <i class='fa fa-arrows-h resize'></i>
 <i class='fa fa-repeat rotate'></i>

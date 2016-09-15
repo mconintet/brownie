@@ -1,7 +1,11 @@
 Layer = require('../layer').Layer
 $ = require('../dom').$
+addCssRule = require('../dom').addCssRule
 Util = require('../util').Util
 Selection = require('../selection').Selection
+Util = require('../util').Util
+
+_addRuleOnceToken = Util.fOnceToken()
 
 module.exports.Text = class Text extends Layer
 
@@ -17,8 +21,16 @@ module.exports.Text = class Text extends Layer
 
     @textChanged = false
 
+    Util.fOnce _addRuleOnceToken, @_addCssRule
+
+  _addCssRule: ->
+    addCssRule '.b-layer-handler .editable * { font: inherit }'
+
   execCmdOnAllTextareaChildren: (cmd, arg) ->
-    Selection.save()
+    sel = Selection.save()
+    range = document.createRange()
+    range.selectNodeContents @textarea
+    sel.addRange range
     document.execCommand cmd, false, arg
     Selection.restore()
 

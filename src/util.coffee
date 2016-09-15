@@ -99,3 +99,15 @@ module.exports.Util = class Util
       true
     else
       a is b
+
+  @fOnceToken: do ->
+    seed = 0
+    ->
+      seed++
+
+  @fOnce: do ->
+    pool = {}
+    (token, fn) ->
+      if pool[token] isnt true
+        fn()
+        pool[token] = true
