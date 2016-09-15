@@ -11,6 +11,7 @@ module.exports.Text = class Text extends Layer
     @fontFamily = 'serif'
     @fontSize = '12px'
     @textColor = '#000'
+    @textAlign = 'left'
 
     @backgroundColor = null
 
@@ -39,6 +40,11 @@ module.exports.Text = class Text extends Layer
     @execCmdOnAllTextareaChildren 'fontSize', 7
     $(@textarea).find('font[size]').removeAttr('size').css {
       color: @textColor
+    }
+
+  syncHandlerTextAlign: ->
+    $(@textarea).css {
+      textAlign: @textAlign
     }
 
   setText: (text) ->
@@ -96,10 +102,23 @@ module.exports.Text = class Text extends Layer
 
     @redraw()
 
+  setTextAlign: (align) ->
+    if align is @textAlign
+      return
+
+    @backupAttr 'textAlign'
+    @textAlign = align
+    @backupAttr 'textAlign'
+
+    if @getHandler().isOpen
+      @syncHandlerTextAlign()
+
+    @redraw()
+
   syncHandlerText: ->
     text = @text
     text = @placeholder if text is ''
-    @textarea.innerHTML = "<div>#{ text }</div>"
+    @textarea.innerText = text
 
   getHandler: ->
     if @handler is null
@@ -169,4 +188,4 @@ module.exports.Text = class Text extends Layer
       x += @borderWidth / 2
       y += @borderWidth / 2
       maxWidth -= @borderWidth
-    @ctx.fillTextFlexibly text, x, y, maxWidth, @fontSize, @fontFamily
+    @ctx.fillTextFlexibly text, x, y, maxWidth, @fontSize, @fontFamily, @textAlign

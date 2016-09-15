@@ -23,7 +23,7 @@
             margin: 0 auto;
         }
 
-        #container *{
+        #container * {
             font: inherit;
         }
 
@@ -104,6 +104,11 @@
                     <option value="20px">20px</option>
                 </select>
                 <input id="textColor" type="text" placeholder="font color" value="#007CFF">
+            </div>
+            <div>
+                <button id="textAlignLeft">align text left</button>
+                <button id="textAlignCenter">align text center</button>
+                <button id="textAlignRight">align text right</button>
             </div>
             <div>
                 <button id="btnAddImageLayer">new image layer</button>
@@ -195,24 +200,29 @@
         });
 
         fontSize.on('change', function () {
-            var layer = stage.focusingLayer;
-            if (this.value && layer instanceof b.TextLayer) {
-                layer.setFontSize(this.value);
+            var v = this.value;
+            if (v) {
+                stage.focusingLayerIs(b.TextLayer, function (layer) {
+                    layer.setFontSize(v);
+                });
             }
         });
 
         fontFamily.on('change', function () {
-            var layer = stage.focusingLayer;
-            if (this.value && layer instanceof b.TextLayer) {
-                layer.setFontFamily(this.value);
+            var v = this.value;
+            if (this.value) {
+                stage.focusingLayerIs(b.TextLayer, function (layer) {
+                    layer.setFontFamily(v);
+                });
             }
         });
 
         textColor.on('keyup', function () {
-            var layer = stage.focusingLayer;
             var val = this.value.trim();
-            if (/(?:#[a-zA-Z0-9]{6})|(?:#([0-9a-zA-Z])\1{2})/.test(val) && layer instanceof b.TextLayer) {
-                layer.setTextColor(val);
+            if (/(?:#[a-zA-Z0-9]{6})|(?:#([0-9a-zA-Z])\1{2})/.test(val)) {
+                stage.focusingLayerIs(b.TextLayer, function (layer) {
+                    layer.setTextColor(val);
+                });
             }
         });
 
@@ -232,6 +242,28 @@
         var btnSaveAs = b.$('#btnSaveAs');
         btnSaveAs.on('click', function () {
             canvas.saveAs('hello brownie');
+        });
+
+        var btnAlignTextLeft = b.$('#textAlignLeft');
+        var btnAlignTextCenter = b.$('#textAlignCenter');
+        var btnAlignTextRight = b.$('#textAlignRight');
+
+        btnAlignTextLeft.on('click', function () {
+            stage.focusingLayerIs(b.TextLayer, function (layer) {
+                layer.setTextAlign('left');
+            });
+        });
+
+        btnAlignTextCenter.on('click', function () {
+            stage.focusingLayerIs(b.TextLayer, function (layer) {
+                layer.setTextAlign('center');
+            });
+        });
+
+        btnAlignTextRight.on('click', function () {
+            stage.focusingLayerIs(b.TextLayer, function (layer) {
+                layer.setTextAlign('right');
+            });
         });
     };
     app(brownie);

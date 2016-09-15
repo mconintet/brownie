@@ -68,7 +68,7 @@ proto.measureText = (text, fontSize = '10px', fontFamily = 'sans-serif') ->
     height: rect.bottom - rect.top
   }
 
-proto.fillTextFlexibly = (text, x, y, maxWidth, fontSize, fontFamily, lineHeight = 0) ->
+proto.fillTextFlexibly = (text, x, y, maxWidth, fontSize, fontFamily, textAlign = 'left', lineHeight = 0) ->
   t = @measureText('t', fontSize, fontFamily)
   th = t.height
 
@@ -117,5 +117,12 @@ proto.fillTextFlexibly = (text, x, y, maxWidth, fontSize, fontFamily, lineHeight
       w = 0
 
   lines.push line if line.str isnt ''
+
   for line in lines
+    switch textAlign
+      when 'center'
+        line.x += (maxWidth - line.w) / 2
+      when 'right'
+        line.x += maxWidth - line.w
+
     @fillText line.str, line.x, line.y

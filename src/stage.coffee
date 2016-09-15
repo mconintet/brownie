@@ -177,3 +177,7 @@ module.exports.Stage = class Stage
     @drawingIndexGenerator.reset()
     @_draw()
     return this
+
+  focusingLayerIs: (cls, cb) ->
+    if @focusingLayer and @focusingLayer instanceof cls
+      cb @focusingLayer
