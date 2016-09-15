@@ -1,6 +1,7 @@
 Layer = require('../layer').Layer
 $ = require('../dom').$
 Util = require('../util').Util
+Selection = require('../selection').Selection
 
 module.exports.Text = class Text extends Layer
 
@@ -13,21 +14,12 @@ module.exports.Text = class Text extends Layer
 
     @backgroundColor = null
 
+    @textChanged = false
+
   execCmdOnAllTextareaChildren: (cmd, arg) ->
-    range = document.createRange()
-    range.selectNodeContents @textarea
-    sel = getSelection()
-    saved = []
-    for i in [0 ... sel.rangeCount]
-      saved.push sel.getRangeAt i
-    sel.removeAllRanges()
-    sel.addRange range
-
+    Selection.save()
     document.execCommand cmd, false, arg
-
-    sel.removeAllRanges()
-    for range in saved
-      sel.addRange range
+    Selection.restore()
 
   syncHandlerFontSize: ->
     @execCmdOnAllTextareaChildren 'fontSize', 7
@@ -104,12 +96,15 @@ module.exports.Text = class Text extends Layer
 
     @redraw()
 
+  syncHandlerText: ->
+    text = @text
+    text = @placeholder if text is ''
+    @textarea.innerHTML = "<div>#{ text }</div>"
+
   getHandler: ->
     if @handler is null
       super()
-      text = @text
-      text = @placeholder if @text is ''
-      textarea = "<div class='editable' contenteditable='true'><div>#{ text }</div></div>"
+      textarea = "<div class='editable' contenteditable='true'></div>"
       textarea = @handler.container.append textarea
       @textarea = textarea
       me = this
@@ -122,11 +117,15 @@ module.exports.Text = class Text extends Layer
         wordBreak: 'break-all'
       }
       .on 'blur', ->
-        me.backupAttr 'text'
-        me.text = Util.sTrimR this.innerText
-        me.backupAttr 'text'
+        if me.textChanged
+          me.backupAttr 'text'
+          me.text = Util.sTrimR this.innerText
+          me.backupAttr 'text'
+      .on 'keyup', ->
+        me.textChanged = true
 
       @handler.on 'beforeOpen', =>
+        @syncHandlerText()
         $(textarea).css {
           fontSize: @fontSize
           fontFamily: @fontFamily
@@ -137,10 +136,18 @@ module.exports.Text = class Text extends Layer
       @handler.on 'afterOpen', =>
         textarea.focus()
         if @text is ''
+          @textChanged = false
           range = document.createRange()
           range.selectNodeContents textarea.firstChild
           sel = getSelection()
           sel.removeAllRanges()
+          sel.addRange range
+        else
+          sel = getSelection()
+          sel.removeAllRanges()
+          range = document.createRange()
+          range.selectNodeContents @textarea
+          range.collapse false
           sel.addRange range
 
     @handler
