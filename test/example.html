@@ -12,7 +12,7 @@
         * {
             margin: 0;
             padding: 0;
-            font: 12px Monaco, Consolas, "Lucida Console", monospace;
+            /*font: 12px Monaco, Consolas, "Lucida Console", monospace;*/
         }
 
         #c {
@@ -74,7 +74,7 @@
 
 <div id="viewport">
     <div class="left">
-        <canvas id="c" width="500" height="300"></canvas>
+        <div id="container" style="width: 500px; height: 300px; border: 1px solid #000"></div>
     </div>
     <div class="right">
         <fieldset>
@@ -91,12 +91,18 @@
             <div>
                 <button id="btnAddTextLayer">new text layer</button>
                 <select id="fontFamily">
-                    <option value="">choose font</option>
+                    <option value="">font family</option>
                     <option value="Arial">Arial</option>
                     <option value="Courier New">Courier New</option>
                     <option value="Comic Sans MS" selected="selected">Comic Sans MS</option>
                 </select>
-                <input id="fontSize" type="text" placeholder="font size" value="12px">
+                <select id="fontSize">
+                    <option value="">font size</option>
+                    <option value="12px" selected>12px</option>
+                    <option value="16px">16px</option>
+                    <option value="18px">18px</option>
+                    <option value="20px">20px</option>
+                </select>
                 <input id="textColor" type="text" placeholder="font color" value="#007CFF">
             </div>
             <div>
@@ -119,7 +125,8 @@
     var app = function (b) {
         "use strict";
 
-        var canvas = new b.Canvas('#c');
+        var container = new b.Container('#container');
+        var canvas = container.canvas;
         var stage = canvas.newStage();
         window.stage = stage;
 
@@ -129,12 +136,18 @@
         hello.fontFamily = 'Comic Sans MS';
         hello.textColor = '#fff';
         hello.zIndex = 1;
+        hello.borderWidth = 1;
         hello.enableHandler();
 
         stage.addLayer(hello);
 
+        var l = new b.Layer(100, 100, 100, 100);
+        l.borderWidth = 1;
+        stage.addLayer(l);
+
         var cake = new b.ImageLayer(140, 10, 230, 280,
                 'http://58.96.180.32/Nutella-Brownies-011.jpg');
+        cake.borderWidth = 1;
         cake.enableHandler();
         stage.addLayer(cake);
 
@@ -180,28 +193,30 @@
             layer.fontFamily = fontFamily.val();
             layer.fontSize = fontSize.val();
             layer.textColor = textColor.val();
+            layer.borderWidth = 1;
             layer.enableHandler();
             stage.addLayer(layer);
         });
 
-        fontSize.on('blur', function () {
+        fontSize.on('change', function () {
             var layer = stage.focusingLayer;
-            if (layer instanceof b.TextLayer) {
+            if (this.value && layer instanceof b.TextLayer) {
                 layer.setFontSize(this.value);
             }
         });
 
-        fontFamily.on('blur', function () {
+        fontFamily.on('change', function () {
             var layer = stage.focusingLayer;
-            if (layer instanceof b.TextLayer) {
+            if (this.value && layer instanceof b.TextLayer) {
                 layer.setFontFamily(this.value);
             }
         });
 
-        textColor.on('blur', function () {
+        textColor.on('keyup', function () {
             var layer = stage.focusingLayer;
-            if (layer instanceof b.TextLayer) {
-                layer.setTextColor(this.value);
+            var val = this.value.trim();
+            if (/(?:#[a-zA-Z0-9]{6})|(?:#([0-9a-zA-Z])\1{2})/.test(val) && layer instanceof b.TextLayer) {
+                layer.setTextColor(val);
             }
         });
 

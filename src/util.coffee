@@ -14,12 +14,6 @@ module.exports.Util = class Util
   @toArray: (obj) ->
     Array::slice.call obj
 
-  @$one: (selector) ->
-    document.querySelector(selector)
-
-  @$all: (selector) ->
-    @toArray document.querySelectorAll(selector)
-
   @aRemoveAt: (arr, index) ->
     arr.splice(index, 1)
 

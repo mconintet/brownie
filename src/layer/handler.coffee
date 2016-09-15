@@ -1,5 +1,6 @@
 $ = require('../dom').$
 Canvas = require('../canvas').Canvas
+EventProducer = require('../event').EventProducer
 
 module.exports.Handler = class Handler
   constructor: (@layer) ->
@@ -11,6 +12,8 @@ module.exports.Handler = class Handler
     @_prepareBtnDelete()
     @_prepareBtnResize()
 
+    @eventProducer = new EventProducer(this)
+
   _prepareContainer: ->
     div = "<div id='b-layer-handler-#{ @layer.id } b-layer-handler'>
 <i class='fa fa-arrows move'></i>
@@ -18,7 +21,8 @@ module.exports.Handler = class Handler
 <i class='fa fa-repeat rotate'></i>
 <i class='fa fa-trash-o delete'></i>
 </div>"
-    @container = $($(document.body).append div)
+
+    @container = $(@layer.stage.canvas.container.dom.append div)
     @container.css {
       display: 'none',
       width: @layer.frame.size.width + 'px',
@@ -58,9 +62,11 @@ module.exports.Handler = class Handler
         dy = evt.clientY - prevPoint[1]
         left = me.container.css('left')
         top = me.container.css('top')
+        ch = me.container.css('height')
+        top = Math.max(top + dy, -ch / 2)
         @container.css {
           left: (left + dx) + 'px',
-          top: (top + dy) + 'px'
+          top: top + 'px'
         }
         @movePrevPoint = [evt.clientX, evt.clientY]
         evt.preventDefault()
@@ -205,21 +211,45 @@ module.exports.Handler = class Handler
         @layer.resize nw, nh
         @layer.backupAttr 'frame'
 
+  syncStyleWithLayer: ->
+    width = @layer.frame.size.width
+    height = @layer.frame.size.height
+    top = @layer.byWindowPosition.y
+    left = @layer.byWindowPosition.x
+
+    if @layer.borderWidth > 0
+      # calc drawing size if border is set
+      width -= @layer.borderWidth
+      height -= @layer.borderWidth
+      top += @layer.borderWidth / 2
+      left += @layer.borderWidth / 2
+
+    # reposition since handler's border width is 1
+    top -= 1
+    left -= 1
+
+    style = {
+      width: width + 'px'
+      height: height + 'px'
+      transform: "rotate(#{ @layer.rotate }deg)"
+      top: top + 'px'
+      left: left + 'px'
+    }
+    @container.css(style)
+
   open: ->
     if @layer.parent is null or @isOpen
       return
+
+    @fire 'beforeOpen'
 
     @layer.stage.focusingLayer = @layer
 
     @layer.syncByWindowPosition()
     @container.css {
-      display: 'block',
-      width: @layer.frame.size.width + 'px',
-      height: @layer.frame.size.height + 'px',
-      transform: 'rotate(0deg)',
-      top: @layer.byWindowPosition.y + 'px',
-      left: @layer.byWindowPosition.x + 'px',
+      display: 'block'
     }
+    @syncStyleWithLayer()
     @layer.setIsHidden true
     @isOpen = true
 
@@ -231,9 +261,13 @@ module.exports.Handler = class Handler
 
     @layer.stage.canvas.on 'click', @_close
 
+    @fire 'afterOpen'
+
   close: ->
     if @layer.parent is null or not @isOpen
       return
+
+    @fire 'beforeClose'
 
     if @_close
       @layer.stage.canvas.off 'click', @_close
@@ -242,7 +276,22 @@ module.exports.Handler = class Handler
     @layer.setIsHidden false
     @isOpen = false
 
+    @fire 'afterClose'
+
   destroy: ->
-    document.body.removeChild @container.get(0)
+    c = @container.first()
+    c.parentNode.removeChild c
     @container = null
     @layer = null
+
+  on: (event, listener) ->
+    @eventProducer.on event, listener
+
+  once: (event, listener) ->
+    @eventProducer.once event, listener
+
+  off: (event, listener) ->
+    @eventProducer.off event, listener
+
+  fire: (event, data) ->
+    @eventProducer.fire event, data

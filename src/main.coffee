@@ -8,6 +8,7 @@ require './context2d'
 
 window.brownie =
   Util: require('./util').Util
+  Container: require('./container').Container
   Canvas: require('./canvas').Canvas
   Rect: require('./rect').Rect
   Layer: require('./layer').Layer

@@ -16,6 +16,9 @@ module.exports.Result = class Result
   get: (i) ->
     @nodeList[i]
 
+  first: ->
+    @nodeList[0]
+
   each: (cb) ->
     for node in @nodeList
       cb(node)
@@ -88,6 +91,10 @@ module.exports.Result = class Result
       for n in node.querySelectorAll(selector)
         found.push n
     new Result(found)
+
+  removeAttr: (attrName) ->
+    @each (node) ->
+      node.removeAttribute attrName
 
 module.exports.pageXOffset = do ->
   if window.pageXOffset?

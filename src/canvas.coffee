@@ -1,4 +1,3 @@
-Util = require('./util').Util
 Stage = require('./stage').Stage
 Event = require('./event').Event
 EventProducer = require('./event').EventProducer
@@ -8,11 +7,10 @@ module.exports.Canvas = class Canvas
   @isHighDPI: @devicePixelRatio > 1
 
   constructor: (@raw)->
-    if typeof @raw is 'string'
-      @raw = Util.$one @raw
-
     if not @raw
       throw new Error('deformed dom')
+
+    @cantainer = null
 
     @ctx = @raw.getContext '2d'
 

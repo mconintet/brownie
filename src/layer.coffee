@@ -6,6 +6,7 @@ Canvas = require('./canvas').Canvas
 Point = require('./point').Point
 Matrix = require('./matrix').Matrix
 $ = require('./dom').$
+pageXOffset = require('./dom').pageXOffset
 pageYOffset = require('./dom').pageYOffset
 Handler = require('./layer/handler').Handler
 
@@ -31,7 +32,7 @@ module.exports.Layer = class Layer
     @frame = new Rect(x, y, width, height)
     @bounds = new Rect(0, 0, width, height)
 
-    @maskToBounds = false
+    @maskToBounds = true
 
     @rotate = 0
 
@@ -107,11 +108,8 @@ module.exports.Layer = class Layer
       if @parent?.capturedTransform?
         m = @parent.capturedTransform
 
-    rect = $(@stage?.canvas.raw).boundRect()
-    x = rect.left
-    y = rect.top + pageYOffset()
-    @byWindowPosition.x = x + @byCanvasPosition.x + m.e / Canvas.devicePixelRatio
-    @byWindowPosition.y = y + @byCanvasPosition.y + m.f / Canvas.devicePixelRatio
+    @byWindowPosition.x = @byCanvasPosition.x + m.e / Canvas.devicePixelRatio
+    @byWindowPosition.y = @byCanvasPosition.y + m.f / Canvas.devicePixelRatio
 
   getHandler: ->
     @handler = new Handler(this) if @handler is null
@@ -139,7 +137,6 @@ module.exports.Layer = class Layer
         @stage.history.newChanges()
 
       changes = @stage.history.currentChanges()
-      console.log changes
       changes?.push change
 
   sync: (change) ->
@@ -233,7 +230,12 @@ module.exports.Layer = class Layer
 
     @ctx.rect @byCanvasPosition.x, @byCanvasPosition.y, @frame.size.width, @frame.size.height
 
+    if @backgroundColor
+      @ctx.fillStyle = @backgroundColor
+      @ctx.fill()
+
     if @borderWidth > 0
+      @ctx.lineWidth = @borderWidth
       @ctx.strokeStyle = @borderColor
       @ctx.stroke()
 
@@ -241,8 +243,8 @@ module.exports.Layer = class Layer
       @ctx.shadowColor = "#1B93F1"
       @ctx.shadowBlur = 20 * Canvas.devicePixelRatio
 
-    @ctx.fillStyle = @backgroundColor
-    @ctx.fill()
+    if @maskToBounds
+      @ctx.clip()
 
     @ctx.closePath()
 

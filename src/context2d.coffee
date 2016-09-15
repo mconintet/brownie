@@ -9,7 +9,6 @@ _setTransform = proto.setTransform
 
 _save = proto.save
 _restore = proto.restore
-_measureText = proto.measureText
 
 proto._currentTransform = new Matrix
 proto._tramsformStack = []
@@ -59,64 +58,64 @@ _calcDiv.style.top = '-1000px'
 _calcDiv.style.padding = 0
 document.body.appendChild _calcDiv
 
-proto.measureText = (text) ->
-    [fontSize, fontFamily...] = @font.split(/\s+/)
-    _calcDiv.style.fontSize = fontSize
-    _calcDiv.style.fontFamily = fontFamily.join(' ')
-    _calcDiv.innerText = text
-    {
-      width: _calcDiv.clientWidth,
-      height: _calcDiv.clientHeight
-    }
+proto.measureText = (text, fontSize = '10px', fontFamily = 'sans-serif') ->
+  _calcDiv.style.fontSize = fontSize
+  _calcDiv.style.fontFamily = fontFamily
+  _calcDiv.innerText = text
+  rect = _calcDiv.getBoundingClientRect()
+  {
+    width: rect.right - rect.left
+    height: rect.bottom - rect.top
+  }
 
-proto.fillTextFlexibly = (text, x, y, maxWidth, lineHeight = 0) ->
-  t = @measureText('t')
-  fontHeight = t.height
-  paddingVertical = 2
-  if lineHeight < fontHeight
-    lineHeight = fontHeight + paddingVertical * 2
-  else
-    paddingVertical = (lineHeight - fontHeight) / 2
+proto.fillTextFlexibly = (text, x, y, maxWidth, fontSize, fontFamily, lineHeight = 0) ->
+  t = @measureText('t', fontSize, fontFamily)
+  th = t.height
+
+  paddingVertical = 0
+  if lineHeight > 0
+    paddingVertical = (lineHeight - th) / 2
 
   w = 0
-  lines = []
-  line = {
-    x: x,
-    y: y,
-    str: []
-  }
   y += paddingVertical
 
-  i = 0
-  len = text.length
-  while i < len
-    c = text[i]
-    w += @measureText(c).width
-    if c is '\r' or c is '\n'
-      lines.push line if line.str.length > 0
-      y += fontHeight + paddingVertical
-      w = 0
-      line = {
-        x: x,
-        y: y,
-        str: []
-      }
-      if c is '\r' and text[i + 1] is '\n'
-        i += 2
-        continue
-    else if w <= maxWidth
-      line.str.push c
-    else
-      lines.push line if line.str.length > 0
-      y += fontHeight + paddingVertical
-      w = 0
-      line = {
-        x: x,
-        y: y
-        str: [c]
-      }
-    i++
+  lines = []
+  line = {
+    x: x
+    y: y
+    w: w
+    str: ''
+  }
 
-  lines.push line if line.str.length > 0
+  for c, i in text
+    if c is '\r' or c is '\n'
+      lines.push line if line.str isnt ''
+      y += th + paddingVertical
+      w = 0
+      line = {
+        x: x
+        y: y
+        w: w
+        str: ''
+      }
+      continue
+
+    str = line.str + c
+    mw = @measureText(str, fontSize, fontFamily).width
+    if mw <= maxWidth
+      line.str = str
+      line.w = mw
+    else
+      lines.push line
+      y += th + paddingVertical
+      line = {
+        x: x
+        y: y
+        w: w
+        str: c
+      }
+      w = 0
+
+  lines.push line if line.str isnt ''
   for line in lines
-    @fillText line.str.join(''), line.x, line.y
+    @fillText line.str, line.x, line.y

@@ -11,7 +11,43 @@ module.exports.Text = class Text extends Layer
     @fontSize = '12px'
     @textColor = '#000'
 
-    @backgroundColor = 'rgba(255, 255, 255, 0)'
+    @backgroundColor = null
+
+  execCmdOnAllTextareaChildren: (cmd, arg) ->
+    range = document.createRange()
+    range.selectNodeContents @textarea
+    sel = getSelection()
+    saved = []
+    for i in [0 ... sel.rangeCount]
+      saved.push sel.getRangeAt i
+    sel.removeAllRanges()
+    sel.addRange range
+
+    document.execCommand cmd, false, arg
+
+    sel.removeAllRanges()
+    for range in saved
+      sel.addRange range
+
+  syncHandlerFontSize: ->
+    @execCmdOnAllTextareaChildren 'fontSize', 7
+    $(@textarea).find('font[size]').removeAttr('size').css {
+      fontSize: @fontSize
+      verticalAlign: 'top'
+    }
+
+  syncHandlerFontFamily: ->
+    @execCmdOnAllTextareaChildren 'fontSize', 7
+    $(@textarea).find('font[size]').removeAttr('size').css {
+      fontFamily: @fontFamily
+      verticalAlign: 'top'
+    }
+
+  syncHandlerTextColor: ->
+    @execCmdOnAllTextareaChildren 'fontSize', 7
+    $(@textarea).find('font[size]').removeAttr('size').css {
+      color: @textColor
+    }
 
   setText: (text) ->
     if text is @text
@@ -36,6 +72,10 @@ module.exports.Text = class Text extends Layer
     @backupAttr 'fontFamily'
     @fontFamily = fontFamily
     @backupAttr 'fontFamily'
+
+    if @getHandler().isOpen
+      @syncHandlerFontFamily()
+
     @redraw()
 
   setFontSize: (fontSize) ->
@@ -45,6 +85,10 @@ module.exports.Text = class Text extends Layer
     @backupAttr 'fontSize'
     @fontSize = fontSize
     @backupAttr 'fontSize'
+
+    if @getHandler().isOpen
+      @syncHandlerFontSize()
+
     @redraw()
 
   setTextColor: (textColor)->
@@ -54,6 +98,10 @@ module.exports.Text = class Text extends Layer
     @backupAttr 'textColor'
     @textColor = textColor
     @backupAttr 'textColor'
+
+    if @getHandler().isOpen
+      @syncHandlerTextColor()
+
     @redraw()
 
   getHandler: ->
@@ -61,20 +109,40 @@ module.exports.Text = class Text extends Layer
       super()
       text = @text
       text = @placeholder if @text is ''
-      textarea = "<textarea>#{ text }</textarea>"
+      textarea = "<div class='editable' contenteditable='true'><div>#{ text }</div></div>"
       textarea = @handler.container.append textarea
+      @textarea = textarea
       me = this
       $(textarea).css {
-        width: '100%',
-        height: '100%',
-        padding: '0',
-        border: '0',
-        resize: 'none'
+        width: '100%'
+        height: '100%'
+        padding: '0'
+        border: '0'
+        outline: 'none'
+        wordBreak: 'break-all'
       }
       .on 'blur', ->
         me.backupAttr 'text'
-        me.text = Util.sTrim $(this).val()
+        me.text = Util.sTrimR this.innerText
         me.backupAttr 'text'
+
+      @handler.on 'beforeOpen', =>
+        $(textarea).css {
+          fontSize: @fontSize
+          fontFamily: @fontFamily
+          color: @textColor
+          overflow: @maskToBounds && 'hidden' || 'auto'
+        }
+
+      @handler.on 'afterOpen', =>
+        textarea.focus()
+        if @text is ''
+          range = document.createRange()
+          range.selectNodeContents textarea.firstChild
+          sel = getSelection()
+          sel.removeAllRanges()
+          sel.addRange range
+
     @handler
 
   _drawPredefined: ->
@@ -86,7 +154,12 @@ module.exports.Text = class Text extends Layer
     @ctx.font = @fontSize + ' ' + @fontFamily
     @ctx.fillStyle = @textColor
 
-    tm = @ctx.measureText(text)
-    x = @frame.origin.x
-    y = @frame.origin.y + tm.height
-    @ctx.fillTextFlexibly text, x, y, @frame.size.width
+    x = @byCanvasPosition.x
+    y = @byCanvasPosition.y + @ctx.measureText('t', @fontSize, @fontFamily).height
+    @ctx.textBaseline = 'bottom'
+    maxWidth = @frame.size.width
+    if @borderWidth > 0
+      x += @borderWidth / 2
+      y += @borderWidth / 2
+      maxWidth -= @borderWidth
+    @ctx.fillTextFlexibly text, x, y, maxWidth, @fontSize, @fontFamily
