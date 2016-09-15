@@ -12,11 +12,7 @@
         * {
             margin: 0;
             padding: 0;
-            /*font: 12px Monaco, Consolas, "Lucida Console", monospace;*/
-        }
-
-        #c {
-            border: 1px solid #000;
+            font: 12px Monaco, Consolas, "Lucida Console", monospace;
         }
 
         #viewport {
@@ -25,6 +21,10 @@
             position: relative;
             overflow: hidden;
             margin: 0 auto;
+        }
+
+        #container *{
+            font: inherit;
         }
 
         fieldset {
@@ -141,12 +141,8 @@
 
         stage.addLayer(hello);
 
-        var l = new b.Layer(100, 100, 100, 100);
-        l.borderWidth = 1;
-        stage.addLayer(l);
-
         var cake = new b.ImageLayer(140, 10, 230, 280,
-                'http://58.96.180.32/Nutella-Brownies-011.jpg');
+                'http://brownie.mconintet.com/Nutella-Brownies-011.jpg');
         cake.borderWidth = 1;
         cake.enableHandler();
         stage.addLayer(cake);
