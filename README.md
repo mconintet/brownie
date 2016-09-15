@@ -24,8 +24,10 @@ This is a canvas toolkit in coffeescript, it can be used to build a static image
 
 1. clone this repo
 2. run `npm install` under repo directory
-3. run `cake build` to build
-4. open `test/example.html` to view the examples
+3. run `git submodule init`
+4. run `git submodule update`
+5. run `cake build` 
+6. open `test/example.html` to view the examples
 
 ## Licence
 
