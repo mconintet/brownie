@@ -69,6 +69,9 @@ module.exports.History = class History
   currentChanges: ->
     @stack[@currentIndex]
 
+  clear: ->
+    @stack = []
+
   on: (event, listener) ->
     @eventProducer.on event, listener
 

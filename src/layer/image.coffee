@@ -8,6 +8,8 @@ module.exports.Image = class Image extends Layer
   constructor: (x, y, width, height, @src = '', @sx = 0, @sy = 0, @sWidth = 0, @sHeight = 0) ->
     super(x, y, width, height)
 
+    @class = 'brownie.ImageLayer'
+
     @image = new _Image()
     @image.crossOrigin = "anonymous"
 
@@ -17,6 +19,21 @@ module.exports.Image = class Image extends Layer
     @image.src = @src if @src isnt ''
 
     @imageLoaded = false
+
+  exportableProperties: ->
+    super().concat [
+      'src',
+      'sx',
+      'sy',
+      'sWidth',
+      'sHeight'
+    ]
+
+  importReplace: ->
+    rp = super()
+    rp['src'] = (v) =>
+      @setSrc v
+    rp
 
   onImageLoaded: ->
     @imageLoaded = true

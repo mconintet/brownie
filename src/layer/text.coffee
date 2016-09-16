@@ -12,6 +12,8 @@ module.exports.Text = class Text extends Layer
   constructor: (x, y, width, height, @placeholder = 'please input text', @text = '') ->
     super(x, y, width, height)
 
+    @class = 'brownie.TextLayer'
+
     @fontFamily = 'serif'
     @fontSize = '12px'
     @textColor = '#000'
@@ -22,6 +24,16 @@ module.exports.Text = class Text extends Layer
     @textChanged = false
 
     Util.fOnce _addRuleOnceToken, @_addCssRule
+
+  exportableProperties: ->
+    super().concat [
+      'placeholder',
+      'text',
+      'fontFamily',
+      'fontSize',
+      'textColor',
+      'textAlign'
+    ]
 
   _addCssRule: ->
     addCssRule '.b-layer-handler .editable * { font: inherit }'

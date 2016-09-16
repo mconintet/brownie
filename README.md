@@ -19,7 +19,7 @@ This is a canvas toolkit in coffeescript, it can be used to build a static image
 - [x] editable text layer
 - [x] auto line breaks
 - [x] mask to bounds
-- [ ] stage exportable&importable
+- [x] stage exportable&importable
 
 ## Usage
 

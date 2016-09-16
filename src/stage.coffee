@@ -25,6 +25,8 @@ module.exports.Stage = class Stage
 
     @maxZIndex = 0
 
+    @stopRedraw = false
+
   handleHistoryChanged: (forward = true) ->
     changes = @history.currentChanges()
     changes?.forEach (change) =>
@@ -181,6 +183,8 @@ module.exports.Stage = class Stage
       @maxZIndex = zIndexed[zIndexed.length - 1].zIndex
 
   redraw: ->
+    if @stopRedraw
+      return
     @canvas.clear()
     @canvas.currentStage = this
     @_draw()
@@ -189,3 +193,21 @@ module.exports.Stage = class Stage
   focusingLayerIs: (cls, cb) ->
     if @focusingLayer and @focusingLayer instanceof cls
       cb @focusingLayer
+
+  export: (toJson = true, stringifyOption...) ->
+    ret = []
+    for layer in @layers
+      ret.push layer.export()
+    ret = JSON.stringify(ret, stringifyOption...) if toJson
+
+  import: (data, jsonString = true) ->
+    @layers = []
+    @history.clear()
+    @stopRedraw = true
+    data = JSON.parse(data) if jsonString
+    for lp in data
+      cls = Util.oGetByPath window, lp['class']
+      layer = new cls
+      @addLayer(layer.import lp, false)
+    @stopRedraw = false
+    @redraw()

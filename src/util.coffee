@@ -58,6 +58,16 @@ module.exports.Util = class Util
 
     target
 
+  @oGetByPath: (obj, path) ->
+    parts = path.split '.'
+    ret = obj
+    for part in parts
+      if ret?
+        ret = ret[part]
+      else
+        break
+    ret
+
   @oClone: (target) ->
     if @isObject target
       @oExtend {}, target

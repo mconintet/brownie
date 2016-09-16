@@ -8,16 +8,11 @@ Matrix = require('./matrix').Matrix
 Handler = require('./layer/handler').Handler
 
 module.exports.Layer = class Layer
-  @BORDER_DIRECTION:
-    TOP: (1 << 0)
-    RIGHT: 1 << 1
-    BOTTOM: 1 << 2
-    LEFT: 1 << 3
-    ALL: 0b1111
-
   @indexGenerator: new IndexGenerator
 
   constructor: (x, y, width, height) ->
+    @class = 'brownie.Layer'
+
     @id = Layer.indexGenerator.auto()
     @addedIndex = -1
 
@@ -27,7 +22,6 @@ module.exports.Layer = class Layer
     @byWindowPosition = new Point
 
     @frame = new Rect(x, y, width, height)
-    @bounds = new Rect(0, 0, width, height)
 
     @maskToBounds = true
 
@@ -35,10 +29,6 @@ module.exports.Layer = class Layer
 
     @borderWidth = 0
     @borderColor = '#000'
-    @borderDirection = Layer.BORDER_DIRECTION.ALL
-
-    @borderSemiMinorAxes = 0
-    @borderSemiMajorAxes = 0
 
     @backgroundColor = '#fff'
 
@@ -66,6 +56,54 @@ module.exports.Layer = class Layer
     @handler = null
 
     @handlerOpenTrigger = 'click'
+
+  exportableProperties: ->
+    [
+      'class',
+      'zIndex',
+      'frame',
+      'maskToBounds',
+      'rotate',
+      'borderWidth',
+      'borderColor',
+      'backgroundColor',
+      'focusable',
+      'useDefaultFocusStyle',
+      'draggable',
+      'handlerOpenTrigger'
+    ]
+
+  export: ->
+    ret = {
+      children: []
+    }
+    ps = @exportableProperties()
+    for p in ps
+      ret[p] = Util.oClone this[p]
+    for layer in @children
+      ret.children.push layer.export()
+    ret
+
+  importReplace: ->
+    {
+      'children': (v) ->
+        ret = []
+        for lp in v
+          cls = Util.oGetByPath window, v['class']
+          layer = new cls
+          ret.push(layer.import v, false)
+        ret
+    }
+
+  import: (data, jsonString = true) ->
+    data = JSON.parse(data) if jsonString
+    for own k,v of data
+      rp = @importReplace()[k]
+      if rp?
+        this[k] = rp(v)
+      else
+        this[k] = v
+    this
 
   enableHandler: (enable = true) ->
     if enable
@@ -232,7 +270,7 @@ module.exports.Layer = class Layer
       @ctx.fill()
 
     if @borderWidth > 0
-      @ctx.lineWidth = @borderWidth
+      @ctx.lineWidth = 1
       @ctx.strokeStyle = @borderColor
       @ctx.stroke()
 
