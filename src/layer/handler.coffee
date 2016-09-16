@@ -2,7 +2,7 @@ $ = require('../dom').$
 Canvas = require('../canvas').Canvas
 EventProducer = require('../event').EventProducer
 Point = require('../point').Point
-Util = require('../Util').Util
+Util = require('../util').Util
 
 module.exports.Handler = class Handler
   constructor: (@layer) ->
