@@ -54,7 +54,7 @@ module.exports.Layer = class Layer
     @isHidden = false
 
     @handler = null
-
+    @handlerEnable = false
     @handlerOpenTrigger = 'click'
 
   exportableProperties: ->
@@ -70,6 +70,7 @@ module.exports.Layer = class Layer
       'focusable',
       'useDefaultFocusStyle',
       'draggable',
+      'handlerEnable',
       'handlerOpenTrigger'
     ]
 
@@ -93,6 +94,8 @@ module.exports.Layer = class Layer
           layer = new cls
           ret.push(layer.import v, false)
         ret
+      'handlerEnable': =>
+        @enableHandler()
     }
 
   import: (data, jsonString = true) ->
@@ -105,8 +108,8 @@ module.exports.Layer = class Layer
         this[k] = v
     this
 
-  enableHandler: (enable = true) ->
-    if enable
+  enableHandler: (@handlerEnable = true) ->
+    if @handlerEnable
       @focusable = true if not @focusable
       @draggable = true if not @draggable
 
