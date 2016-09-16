@@ -4,3 +4,6 @@
 [submodule "test/libs/canvas2image"]
 	path = test/libs/canvas2image
 	url = https://github.com/hongru/canvas2image.git
+[submodule "test/libs/Remodal"]
+	path = test/libs/Remodal
+	url = https://github.com/VodkaBears/Remodal.git

@@ -8,6 +8,8 @@
     <title>brownie | test&demo</title>
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
     <link rel="stylesheet" href="//cdn.staticfile.org/highlight.js/9.0.0/styles/tomorrow-night.min.css">
+    <link rel="stylesheet" href="libs/Remodal/dist/remodal.css">
+    <link rel="stylesheet" href="libs/Remodal/dist/remodal-default-theme.css">
     <style>
         * {
             margin: 0;
@@ -64,6 +66,32 @@
         input[type=text] {
             width: 80px;
         }
+
+        textarea {
+            resize: none;
+        }
+
+        .remodal textarea {
+            width: 100%;
+            height: 300px;
+            outline: none;
+        }
+
+        .remodal h3 {
+            font-size: 20px;
+            text-align: left;
+            padding-bottom: 30px;
+        }
+
+        .remodal button {
+            height: 30px;
+            line-height: 30px;
+            padding: 0;
+        }
+
+        .remodal .buttons {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -110,17 +138,37 @@
                 <button id="btnAddImageLayer">new image layer</button>
             </div>
             <div>
+                <button id="btnExport">export</button>
+                <button id="btnImport">import</button>
+            </div>
+            <div>
                 <button id="btnSaveAs">save as</button>
             </div>
         </fieldset>
     </div>
     <div class="clear"></div>
     <pre><code class="js"></code></pre>
+
+    <div class="remodal" id="export" data-remodal-id="export">
+        <h3>Exported</h3>
+        <div><textarea></textarea></div>
+    </div>
+
+    <div class="remodal" id="import" data-remodal-id="import">
+        <h3>Import</h3>
+        <div><textarea>[]</textarea></div>
+        <div class="buttons">
+            <button data-remodal-action="cancel" class="remodal-cancel">Cancel</button>
+            <button data-remodal-action="confirm" class="remodal-confirm">OK</button>
+        </div>
+    </div>
 </div>
 <script src="//cdn.staticfile.org/highlight.js/9.0.0/highlight.min.js"></script>
 <script src="../dist/js/brownie.min.js"></script>
 <script src="libs/FileSaver/FileSaver.min.js"></script>
 <script src="libs/canvas2image/canvas2image.js"></script>
+<script src="//cdn.staticfile.org/jquery/2.2.1/jquery.min.js"></script>
+<script src="libs/Remodal/dist/remodal.js"></script>
 
 <script id="src">
     var app = function (b) {
@@ -258,6 +306,24 @@
             stage.focusingLayerIs(b.TextLayer, function (layer) {
                 layer.setTextAlign('right');
             });
+        });
+
+        var btnExport = b.$('#btnExport');
+        var btnImport = b.$('#btnImport');
+        var exportModal = $('[data-remodal-id=export]').remodal();
+        var importModal = $('[data-remodal-id=import]').remodal();
+
+        $(document).on('confirmation', '[data-remodal-id=import]', function () {
+            stage.import(b.$('#import textarea').first().value);
+        });
+
+        btnExport.on('click', function () {
+            b.$('#export textarea').first().value = stage.export(true, null, 4);
+            exportModal.open();
+        });
+
+        btnImport.on('click', function () {
+            importModal.open();
         });
     };
     app(brownie);
