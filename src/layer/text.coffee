@@ -37,10 +37,12 @@ module.exports.Text = class Text extends Layer
 
   syncHandlerFontSize: ->
     @execCmdOnAllTextareaChildren 'fontSize', 7
-    $(@textarea).find('font[size]').removeAttr('size').css {
+    p = {
       fontSize: @fontSize
       verticalAlign: 'top'
     }
+    $(@textarea).css p
+    $(@textarea).find('font[size]').removeAttr('size').css p
 
   syncHandlerFontFamily: ->
     @execCmdOnAllTextareaChildren 'fontSize', 7
@@ -64,9 +66,11 @@ module.exports.Text = class Text extends Layer
     if text is @text
       return
 
-    @backupAttr 'text'
-    @text = text
-    @backupAttr 'text'
+    @text = @backupAttr 'text', text
+
+    if @getHandler().isOpen
+      @syncHandlerText()
+
     @redraw()
 
   setPlaceholder: (placeholder) ->
@@ -80,9 +84,7 @@ module.exports.Text = class Text extends Layer
     if fontFamily is @fontFamily
       return
 
-    @backupAttr 'fontFamily'
-    @fontFamily = fontFamily
-    @backupAttr 'fontFamily'
+    @fontFamily = @backupAttr 'fontFamily', fontFamily
 
     if @getHandler().isOpen
       @syncHandlerFontFamily()
@@ -93,9 +95,7 @@ module.exports.Text = class Text extends Layer
     if fontSize is @fontSize
       return
 
-    @backupAttr 'fontSize'
-    @fontSize = fontSize
-    @backupAttr 'fontSize'
+    @fontSize = @backupAttr 'fontSize', fontSize
 
     if @getHandler().isOpen
       @syncHandlerFontSize()
@@ -106,9 +106,7 @@ module.exports.Text = class Text extends Layer
     if textColor is @textColor
       return
 
-    @backupAttr 'textColor'
-    @textColor = textColor
-    @backupAttr 'textColor'
+    @textColor = @backupAttr 'textColor', textColor
 
     if @getHandler().isOpen
       @syncHandlerTextColor()
@@ -119,9 +117,7 @@ module.exports.Text = class Text extends Layer
     if align is @textAlign
       return
 
-    @backupAttr 'textAlign'
-    @textAlign = align
-    @backupAttr 'textAlign'
+    @textAlign = @backupAttr 'textAlign', align
 
     if @getHandler().isOpen
       @syncHandlerTextAlign()
@@ -150,9 +146,7 @@ module.exports.Text = class Text extends Layer
       }
       .on 'blur', ->
         if me.textChanged
-          me.backupAttr 'text'
-          me.text = Util.sTrimR this.innerText
-          me.backupAttr 'text'
+          me.text = me.backupAttr 'text', Util.sTrimR this.innerText
       .on 'keyup', ->
         me.textChanged = true
 

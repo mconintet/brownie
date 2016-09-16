@@ -46,22 +46,19 @@ module.exports.History = class History
 
   forward: (fire = true) ->
     if @forwardable()
-      @currentIndex = 0 if @currentIndex < 0
-      @fire('forward') if fire
       @currentIndex++
+      @fire('forward') if fire
 
   back: (fire = true) ->
     if @backable()
-      max = @stack.length - 1
-      @currentIndex = max if @currentIndex > max
       @fire('back') if fire
       @currentIndex--
 
   forwardable: ->
-    @currentIndex < @stack.length
+    @currentIndex isnt @stack.length - 1
 
   backable: ->
-    @currentIndex > -1
+    @currentIndex isnt 0
 
   newChanges: ->
     changes = new Changes()

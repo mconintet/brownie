@@ -11,7 +11,7 @@ module.exports.Stage = class Stage
 
     @layers = []
 
-    @drawingIndexGenerator = new IndexGenerator
+    @indexGenerator = new IndexGenerator
 
     @focusingLayer = null
 
@@ -46,7 +46,7 @@ module.exports.Stage = class Stage
         if id?
           layer = @getLayerById id
           layer.closeHandler()
-          layer.sync change
+          layer.syncChange change, forward
           @redraw()
 
   _backupAdding: (layer) ->
@@ -137,13 +137,21 @@ module.exports.Stage = class Stage
 
   broadcastMouseEvent: (evt) ->
     fulfilled = []
+    fulfilledZIndexed = []
     @walkLayers (layer) ->
       if not layer.isHidden and layer.containPoint evt.x, evt.y
-        fulfilled.push layer
+        if layer.zIndex is 0
+          fulfilled.push layer
+        else
+          fulfilledZIndexed.push layer
 
     fulfilled.sort (a, b) ->
-      return b.drawingIndex - a.drawingIndex
+      b.addedIndex - a.addedIndex
 
+    fulfilledZIndexed.sort (a, b) ->
+      b.zIndex - a.zIndex
+
+    fulfilled = fulfilledZIndexed.concat fulfilled
     fulfilled.every (layer) ->
       listeners = layer.listenersOf evt.name
       bubbling = false
@@ -156,6 +164,7 @@ module.exports.Stage = class Stage
     zIndexed = []
     @walkLayers (layer) =>
       layer.stage = this
+      layer.addedIndex = @indexGenerator.auto() if layer.addedIndex is -1
       layer.ctx = @canvas.ctx
       if layer.zIndex > 0
         zIndexed.push layer
@@ -174,7 +183,6 @@ module.exports.Stage = class Stage
   redraw: ->
     @canvas.clear()
     @canvas.currentStage = this
-    @drawingIndexGenerator.reset()
     @_draw()
     return this
 

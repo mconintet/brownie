@@ -52,22 +52,22 @@ module.exports.Util = class Util
           if !target[k]
             target[k] = []
           v.forEach (v) ->
-            target[k].push @clone(v)
+            target[k].push @oClone(v)
         else
           target[k] = v
 
     target
 
-  @clone: (target) ->
+  @oClone: (target) ->
     if @isObject target
-      return @oExtend {}, target
+      @oExtend {}, target
     else if @isArray target
       ret = []
       for v in target
         ret.push @clone(v)
-      return ret
+      ret
     else
-      return target
+      target
 
   @sTrim: (str, sep = '\\s') ->
     str.replace(new RegExp('^' + sep + '+|' + sep + '+$', 'g'), '')

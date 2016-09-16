@@ -5,9 +5,6 @@ IndexGenerator = require('./index').IndexGenerator
 Canvas = require('./canvas').Canvas
 Point = require('./point').Point
 Matrix = require('./matrix').Matrix
-$ = require('./dom').$
-pageXOffset = require('./dom').pageXOffset
-pageYOffset = require('./dom').pageYOffset
 Handler = require('./layer/handler').Handler
 
 module.exports.Layer = class Layer
@@ -22,7 +19,7 @@ module.exports.Layer = class Layer
 
   constructor: (x, y, width, height) ->
     @id = Layer.indexGenerator.auto()
-    @drawingIndex = -1
+    @addedIndex = -1
 
     @zIndex = 0
 
@@ -121,26 +118,28 @@ module.exports.Layer = class Layer
   closeHandler: ->
     @getHandler().close()
 
-  backupAttr: (attr, newChanges = true) ->
+  backupAttr: (attr, newVal, newChanges = true) ->
     val = this[attr]
-    if val?
-      last = @stage.history.getLastChange()
+    if val isnt undefined
       change = {
         id: @id,
         attr: attr,
-        val: Util.clone(val)
+        old: Util.oClone val
+        new: Util.oClone newVal
       }
-      if Util.oEqual last, change
-        return
 
       if newChanges
         @stage.history.newChanges()
 
       changes = @stage.history.currentChanges()
       changes?.push change
+    newVal
 
-  sync: (change) ->
-    this[change['attr']] = change['val']
+  syncChange: (change, forward = true) ->
+    if forward
+      this[change['attr']] = change['new']
+    else
+      this[change['attr']] = change['old']
 
   focus: ->
     @stage.focusingLayer?.blur()
@@ -148,10 +147,8 @@ module.exports.Layer = class Layer
     @focusing = true
     @moveable = true
     if @draggable
-      @backupAttr 'moveDelta'
       @stage.canvas.once 'mouseup', =>
-        @moveable = false
-        @backupAttr 'moveDelta'
+        @moveable = @backupAttr 'moveDelta', false
     @redraw()
 
   blur: ->
@@ -254,8 +251,6 @@ module.exports.Layer = class Layer
     if @ctx is null
       return this
 
-    @drawingIndex = @stage.drawingIndexGenerator.auto()
-
     @ctx.save()
 
     @_drawPredefined()
@@ -282,9 +277,7 @@ module.exports.Layer = class Layer
     @redraw()
 
   bringToFront: ->
-    @backupAttr 'zIndex'
-    @zIndex = @stage.maxZIndex + 1
-    @backupAttr 'zIndex'
+    @zIndex = @backupAttr 'zIndex', @stage.maxZIndex + 1
     @redraw()
 
   removeFromSuperLayer: ->
