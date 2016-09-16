@@ -273,7 +273,7 @@ module.exports.Layer = class Layer
       @ctx.fill()
 
     if @borderWidth > 0
-      @ctx.lineWidth = 1
+      @ctx.lineWidth = @borderWidth
       @ctx.strokeStyle = @borderColor
       @ctx.stroke()
 
