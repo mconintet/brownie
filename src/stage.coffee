@@ -47,9 +47,10 @@ module.exports.Stage = class Stage
         id = change['id']
         if id?
           layer = @getLayerById id
-          layer.closeHandler()
-          layer.syncChange change, forward
-          @redraw()
+          if layer?
+            layer.closeHandler()
+            layer.syncChange change, forward
+            @redraw()
 
   _backupAdding: (layer) ->
     change = {
