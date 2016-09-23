@@ -209,6 +209,6 @@ module.exports.Stage = class Stage
     for lp in data
       cls = Util.oGetByPath window, lp['class']
       layer = new cls
-      @addLayer(layer.import lp, false)
+      @addLayer(layer.import(lp, false), false)
     @stopRedraw = false
     @redraw()
