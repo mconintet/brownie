@@ -207,3 +207,7 @@ module.exports.Text = class Text extends Layer
       y += @borderWidth / 2
       maxWidth -= @borderWidth
     @ctx.fillTextFlexibly text, x, y, maxWidth, @fontSize, @fontFamily, @textAlign
+
+  applyCaptureRate: (rate) ->
+    super(rate)
+    @fontSize = (parseInt(@fontSize) * rate) + 'px'

@@ -1,7 +1,6 @@
 Stage = require('./stage').Stage
 Event = require('./event').Event
 EventProducer = require('./event').EventProducer
-TextLayer = require('./layer/text').Text
 
 module.exports.Canvas = class Canvas
   @devicePixelRatio: window.devicePixelRatio ? 1
@@ -153,18 +152,7 @@ module.exports.Canvas = class Canvas
     stage = shadow.newStage()
     stage.import data, false
     stage.walkLayers (layer) ->
-      frame = layer.frame
-      frame.origin.x *= rate
-      frame.origin.y *= rate
-      frame.size.width *= rate
-      frame.size.height *= rate
-
-      moveDelta = layer.moveDelta
-      moveDelta.x *= rate
-      moveDelta.y *= rate
-
-      if layer instanceof TextLayer
-        layer.fontSize = (parseInt(layer.fontSize) * rate) + 'px'
+      layer.applyCaptureRate rate
 
     {
       shadow: shadow

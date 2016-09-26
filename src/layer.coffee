@@ -111,6 +111,15 @@ module.exports.Layer = class Layer
         this[k] = v
     this
 
+  applyCaptureRate: (rate) ->
+    @frame.origin.x *= rate
+    @frame.origin.y *= rate
+    @frame.size.width *= rate
+    @frame.size.height *= rate
+
+    @moveDelta.x *= rate
+    @moveDelta.y *= rate
+
   enableHandler: (@handlerEnable = true) ->
     if @handlerEnable
       @focusable = true if not @focusable
