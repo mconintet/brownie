@@ -164,12 +164,13 @@ module.exports.Canvas = class Canvas
   destroyShadow: (shadow) ->
     document.body.removeChild shadow.raw
 
-  capture: (rate = 1, type = 'png', cb, encoderOptions = 0.92) ->
+  capture: (rate = 1, type = 'png', encoderOptions = 0.92) ->
     type = 'jpeg' if type is 'jpg'
     {shadow, stage} = @makeShadow rate
-    stage.redraw =>
-      cb?(shadow.raw.toDataURL 'image/' + type, encoderOptions)
-      @destroyShadow shadow
+    new Promise (resolve) =>
+      stage.redraw =>
+        resolve(shadow.raw.toDataURL 'image/' + type, encoderOptions)
+        @destroyShadow shadow
 
   captureAs: (rate = 1, filename, type = 'png', encoderOptions = 0.92) ->
     {shadow, stage} = @makeShadow rate
