@@ -58,7 +58,7 @@ module.exports.History = class History
     @currentIndex isnt @stack.length - 1
 
   backable: ->
-    @currentIndex isnt 0
+    @currentIndex isnt -1
 
   newChanges: ->
     changes = new Changes()
