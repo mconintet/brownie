@@ -53,7 +53,6 @@ module.exports.Text = class Text extends Layer
       fontSize: @fontSize
       verticalAlign: 'top'
     }
-    $(@textarea).css p
     $(@textarea).find('font[size]').removeAttr('size').css p
 
   syncHandlerFontFamily: ->
