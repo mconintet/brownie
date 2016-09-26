@@ -125,9 +125,48 @@ module.exports.Canvas = class Canvas
       bv[i] = bs.charCodeAt(i)
     new Blob([b], {type: 'image/octet-stream'})
 
-  saveAs: (filename) ->
+  saveAs: (filename, type = 'png') ->
     if 'toBlob' of @raw
       @raw.toBlob (blob) ->
-        saveAs(blob, filename + '.png')
+        saveAs(blob, filename + '.' + type)
     else
-      Canvas2Image.saveAsImage(@raw, @raw.width, @raw.height, 'png')
+      Canvas2Image.saveAsImage(@raw, @raw.width, @raw.height, type)
+
+  makeShadow: ->
+    raw = document.createElement('canvas')
+    raw.style.display = 'none'
+    document.body.appendChild raw
+    new Canvas(raw)
+
+  destroyShadow: (shadow) ->
+    document.body.removeChild shadow.raw
+
+  capture: (rate = 1, filename, type) ->
+    rate = rate / Canvas.devicePixelRatio
+    shadow = @makeShadow()
+    shadow.raw.width = @raw.width * rate
+    shadow.raw.height = @raw.height * rate
+    shadow.raw.style.width = shadow.raw.width + 'px'
+    shadow.raw.style.height = shadow.raw.height + 'px'
+
+    scale = Canvas.devicePixelRatio * rate
+    shadow.ctx.setTransform(1, 0, 0, 1, 0, 0)
+    shadow.ctx.scale scale, scale
+
+    data = @currentStage.export false
+    stage = shadow.newStage()
+    stage.import data, false
+    stage.walkLayers (layer) ->
+      frame = layer.frame
+      frame.origin.x *= rate
+      frame.origin.y *= rate
+      frame.size.width *= rate
+      frame.size.height *= rate
+
+      moveDelta = layer.moveDelta
+      moveDelta.x *= rate
+      moveDelta.y *= rate
+
+    stage.redraw =>
+      shadow.saveAs filename, type
+      @destroyShadow shadow

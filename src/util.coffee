@@ -35,9 +35,9 @@ module.exports.Util = class Util
         arr.splice i, 0, stuff
         return
 
-  @oExtend: (dst, src) ->
-    args = @toArray arguments
-    target = args.shift()
+  @oExtend: (dst, src...) ->
+    args = src
+    target = dst
 
     for arg in args
       if !arg

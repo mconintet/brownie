@@ -163,15 +163,23 @@ module.exports.Stage = class Stage
       bubbling is true
     false
 
-  _draw: ->
+  _draw: (cb) ->
+    drawing = 0
+    fire = ->
+      cb?() if drawing is 0
+
     zIndexed = []
     @walkLayers (layer) =>
+      drawing++
       layer.stage = this
       layer.addedIndex = @indexGenerator.auto() if layer.addedIndex is -1
       layer.ctx = @canvas.ctx
       if layer.zIndex > 0
         zIndexed.push layer
       else
+        layer.on 'afterDraw', ->
+          drawing--
+          fire()
         layer.draw()
 
     if zIndexed.length > 0
@@ -179,16 +187,20 @@ module.exports.Stage = class Stage
         return a.zIndex - b.zIndex
 
       zIndexed.forEach (layer) ->
+        drawing++
+        layer.on 'afterDraw', ->
+          drawing--
+          fire()
         layer.draw()
 
       @maxZIndex = zIndexed[zIndexed.length - 1].zIndex
 
-  redraw: ->
+  redraw: (cb) ->
     if @stopRedraw
       return
     @canvas.clear()
     @canvas.currentStage = this
-    @_draw()
+    @_draw cb
     return this
 
   focusingLayerIs: (cls, cb) ->
@@ -200,8 +212,9 @@ module.exports.Stage = class Stage
     for layer in @layers
       ret.push layer.export()
     ret = JSON.stringify(ret, stringifyOption...) if toJson
+    ret
 
-  import: (data, jsonString = true) ->
+  import: (data, jsonString = true, autoRedraw = true, cb) ->
     @layers = []
     @history.clear()
     @stopRedraw = true
@@ -211,4 +224,7 @@ module.exports.Stage = class Stage
       layer = new cls
       @addLayer(layer.import(lp, false), false)
     @stopRedraw = false
-    @redraw()
+    if autoRedraw
+      @redraw cb
+    else
+      cb?()

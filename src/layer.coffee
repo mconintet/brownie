@@ -22,6 +22,7 @@ module.exports.Layer = class Layer
     @byWindowPosition = new Point
 
     @frame = new Rect(x, y, width, height)
+    @bounds = new Rect(x, y, width, height)
 
     @maskToBounds = true
 
@@ -70,6 +71,7 @@ module.exports.Layer = class Layer
       'focusable',
       'useDefaultFocusStyle',
       'draggable',
+      'moveDelta',
       'handlerEnable',
       'handlerOpenTrigger'
     ]
@@ -94,8 +96,9 @@ module.exports.Layer = class Layer
           layer = new cls
           ret.push(layer.import v, false)
         ret
-      'handlerEnable': =>
+      'handlerEnable': (v) =>
         @enableHandler()
+        v
     }
 
   import: (data, jsonString = true) ->
@@ -288,7 +291,7 @@ module.exports.Layer = class Layer
 
   drawing: ->
 
-  draw: ->
+  draw: (fire = true) ->
     if @ctx is null
       return this
 
@@ -299,7 +302,11 @@ module.exports.Layer = class Layer
 
     @ctx.restore()
 
+    @fireDrew() if fire
     return this
+
+  fireDrew: ->
+    @fire 'afterDraw'
 
   redraw: ->
     if @stage isnt null

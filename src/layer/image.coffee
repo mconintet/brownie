@@ -56,6 +56,9 @@ module.exports.Image = class Image extends Layer
   setSrcSize: (@sx = 0, @sy = 0, @sWidth = 0, @sHeight = 0) ->
     @redraw() if @imageLoaded
 
+  draw: ->
+    super(false)
+
   _drawPredefined: ->
     super()
 
@@ -75,6 +78,8 @@ module.exports.Image = class Image extends Layer
         @ctx.drawImage @image, @sx, @sy, @sWidth, @sHeight, dx, dy, dWidth, dHeight
       else
         @ctx.drawImage @image, dx, dy, dWidth, dHeight
+
+      @fireDrew()
 
   getHandler: ->
     if @handler is null
