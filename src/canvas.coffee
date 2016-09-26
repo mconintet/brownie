@@ -125,10 +125,12 @@ module.exports.Canvas = class Canvas
       bv[i] = bs.charCodeAt(i)
     new Blob([b], {type: 'image/octet-stream'})
 
-  saveAs: (filename, type = 'png') ->
+  saveAs: (filename, type = 'png', encoderOptions) ->
+    type = 'jpeg' if type is 'jpg'
     if 'toBlob' of @raw
       @raw.toBlob (blob) ->
         saveAs(blob, filename + '.' + type)
+      , 'image/' + type, encoderOptions
     else
       Canvas2Image.saveAsImage(@raw, @raw.width, @raw.height, type)
 
@@ -162,14 +164,15 @@ module.exports.Canvas = class Canvas
   destroyShadow: (shadow) ->
     document.body.removeChild shadow.raw
 
-  capture: (rate = 1, type = 'png', cb, encoderOptions = null) ->
+  capture: (rate = 1, type = 'png', cb, encoderOptions = 0.92) ->
+    type = 'jpeg' if type is 'jpg'
     {shadow, stage} = @makeShadow rate
     stage.redraw =>
-      cb?(shadow.raw.toDataURL type, encoderOptions)
+      cb?(shadow.raw.toDataURL 'image/' + type, encoderOptions)
       @destroyShadow shadow
 
-  captureAs: (rate = 1, filename, type) ->
+  captureAs: (rate = 1, filename, type = 'png', encoderOptions = 0.92) ->
     {shadow, stage} = @makeShadow rate
     stage.redraw =>
-      shadow.saveAs filename, type
+      shadow.saveAs filename, type, encoderOptions
       @destroyShadow shadow
