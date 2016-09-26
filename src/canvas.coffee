@@ -1,6 +1,7 @@
 Stage = require('./stage').Stage
 Event = require('./event').Event
 EventProducer = require('./event').EventProducer
+TextLayer = require('./layer/text').Text
 
 module.exports.Canvas = class Canvas
   @devicePixelRatio: window.devicePixelRatio ? 1
@@ -132,18 +133,13 @@ module.exports.Canvas = class Canvas
     else
       Canvas2Image.saveAsImage(@raw, @raw.width, @raw.height, type)
 
-  makeShadow: ->
+  makeShadow: (rate) ->
     raw = document.createElement('canvas')
     raw.style.display = 'none'
     document.body.appendChild raw
-    new Canvas(raw)
+    shadow = new Canvas(raw)
 
-  destroyShadow: (shadow) ->
-    document.body.removeChild shadow.raw
-
-  capture: (rate = 1, filename, type) ->
     rate = rate / Canvas.devicePixelRatio
-    shadow = @makeShadow()
     shadow.raw.width = @raw.width * rate
     shadow.raw.height = @raw.height * rate
     shadow.raw.style.width = shadow.raw.width + 'px'
@@ -167,6 +163,25 @@ module.exports.Canvas = class Canvas
       moveDelta.x *= rate
       moveDelta.y *= rate
 
+      if layer instanceof TextLayer
+        layer.fontSize = (parseInt(layer.fontSize) * rate) + 'px'
+
+    {
+      shadow: shadow
+      stage: stage
+    }
+
+  destroyShadow: (shadow) ->
+    document.body.removeChild shadow.raw
+
+  capture: (rate = 1, type = 'png', cb, encoderOptions = null) ->
+    {shadow, stage} = @makeShadow rate
+    stage.redraw =>
+      cb?(shadow.raw.toDataURL type, encoderOptions)
+      @destroyShadow shadow
+
+  captureAs: (rate = 1, filename, type) ->
+    {shadow, stage} = @makeShadow rate
     stage.redraw =>
       shadow.saveAs filename, type
       @destroyShadow shadow
