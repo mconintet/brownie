@@ -24,7 +24,6 @@ module.exports.Image = class Image extends Layer
   preventSrcFromCache: (src) ->
     url = Url.parse src
     url.search['_ec'] = new Date().getTime()
-    console.dir url
     url + ''
 
   exportableProperties: ->
