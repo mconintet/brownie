@@ -1,6 +1,7 @@
 Layer = require('../layer').Layer
 $ = require('../dom').$
 Agent = require('../agent').Agent
+Url = require('../url').Url
 
 _Image = window.Image
 
@@ -16,9 +17,15 @@ module.exports.Image = class Image extends Layer
     @image.onload = =>
       @onImageLoaded()
 
-    @image.src = @src if @src isnt ''
+    @image.src = @preventSrcFromCache(@src) if @src isnt ''
 
     @imageLoaded = false
+
+  preventSrcFromCache: (src) ->
+    url = Url.parse src
+    url.search['_ec'] = new Date().getTime()
+    console.dir url
+    url + ''
 
   exportableProperties: ->
     super().concat [
@@ -50,7 +57,7 @@ module.exports.Image = class Image extends Layer
   setSrc: (src) ->
     if src is @src
       return
-    @src = src
+    @src = @preventSrcFromCache(src)
     @image.src = @src
 
   setSrcSize: (@sx = 0, @sy = 0, @sWidth = 0, @sHeight = 0) ->
