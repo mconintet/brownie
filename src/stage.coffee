@@ -195,6 +195,8 @@ module.exports.Stage = class Stage
 
       @maxZIndex = zIndexed[zIndexed.length - 1].zIndex
 
+    fire()
+
   redraw: (cb) ->
     if @stopRedraw
       return
