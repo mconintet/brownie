@@ -22,6 +22,13 @@ module.exports.Image = class Image extends Layer
     @imageLoaded = false
 
   preventSrcFromCache: (src) ->
+    if !Url.regOnline.test(src)
+      lo = window.location
+      host = lo.protocol + '//' + lo.host
+      if src[0] is '/'
+        src = host + src
+      else
+        src = host + lo.pathname + '/' + src
     url = Url.parse src
     url.search['_ec'] = new Date().getTime()
     url + ''
