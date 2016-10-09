@@ -21,6 +21,8 @@ module.exports.Image = class Image extends Layer
 
     @imageLoaded = false
 
+    @backgroundColor = null
+
   preventSrcFromCache: (src) ->
     if !Url.regOnline.test(src)
       lo = window.location
@@ -76,8 +78,8 @@ module.exports.Image = class Image extends Layer
     super()
 
     if @imageLoaded
-      dx = @frame.origin.x
-      dy = @frame.origin.y
+      dx = @byCanvasPosition.x
+      dy = @byCanvasPosition.y
       dWidth = @frame.size.width
       dHeight = @frame.size.height
 

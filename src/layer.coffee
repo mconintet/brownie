@@ -150,10 +150,7 @@ module.exports.Layer = class Layer
     if @draggable
       m.e = @moveDelta.x
       m.f = @moveDelta.y
-      if @parent?.capturedTransform?
-        m = m.multiply @parent.capturedTransform
-      else
-        m = m.multiply @ctx.getTransform()
+      m = m.multiply @ctx.getTransform()
     else
       if @parent?.capturedTransform?
         m = @parent.capturedTransform
@@ -254,10 +251,7 @@ module.exports.Layer = class Layer
       m = new Matrix()
       m.e = @moveDelta.x
       m.f = @moveDelta.y
-      if @parent?.capturedTransform?
-        m = m.multiply @parent.capturedTransform
-      else
-        m = m.multiply @ctx.getTransform()
+      m = m.multiply @ctx.getTransform()
     else
       if @parent?.capturedTransform?
         m = @parent.capturedTransform

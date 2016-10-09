@@ -18,3 +18,16 @@ module.exports.Matrix = class Matrix
 
   toString: ->
     '[' + [@a, @b, @c, @d, @e, @f] + ']'
+
+  scale: (sx, sy)->
+    @multiply new Matrix(sx, 0, 0, sy, 0, 0)
+
+  clone: ->
+    m = new Matrix()
+    m.a = @a
+    m.b = @b
+    m.c = @c
+    m.d = @d
+    m.e = @e
+    m.f = @f
+    m
