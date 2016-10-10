@@ -178,6 +178,8 @@
         var canvas = container.canvas;
         var stage = canvas.newStage();
 
+        window.stage = stage;
+
         var hello = new b.TextLayer(180, 10, 153, 29);
         hello.text = 'Hello Brownie :)';
         hello.fontSize = '20px';
@@ -193,7 +195,7 @@
         cake.enableHandler();
         stage.addLayer(cake);
 
-        var sub = new b.ImageLayer(0, 0, 200, 50,
+        var sub = new b.ImageLayer(0, 0, 50, 50,
                 'http://brownie.mconintet.com/unnamed.png');
         sub.enableHandler();
         cake.addChild(sub);

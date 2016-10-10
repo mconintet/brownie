@@ -91,12 +91,13 @@ module.exports.Layer = class Layer
 
   importReplace: ->
     {
-      'children': (v) ->
+      'children': (v) =>
         ret = []
         for lp in v
-          cls = Util.oGetByPath window, v['class']
+          cls = Util.oGetByPath window, lp['class']
           layer = new cls
-          ret.push(layer.import v, false)
+          layer.parent = @
+          ret.push(layer.import lp, false)
         ret
       'handlerEnable': (v) =>
         @enableHandler()
@@ -229,8 +230,8 @@ module.exports.Layer = class Layer
 
   _calculatePosition: ->
     if @parent isnt null and @parent instanceof Layer
-      @byCanvasPosition.x = @parent.byCanvasPosition.x + @parent.bounds.origin.x + @frame.origin.x
-      @byCanvasPosition.y = @parent.byCanvasPosition.y + @parent.bounds.origin.y + @frame.origin.y
+      @byCanvasPosition.x = @parent.byCanvasPosition.x + @frame.origin.x
+      @byCanvasPosition.y = @parent.byCanvasPosition.y + @frame.origin.y
     else
       @byCanvasPosition.x = @frame.origin.x
       @byCanvasPosition.y = @frame.origin.y
