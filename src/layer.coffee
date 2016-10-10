@@ -197,10 +197,6 @@ module.exports.Layer = class Layer
     @stage.focusingLayer?.blur()
     @stage.focusingLayer = this
     @focusing = true
-    @moveable = true
-    if @draggable
-      @stage.canvas.once 'mouseup', =>
-        @moveable = @backupAttr 'moveDelta', false
     @redraw()
 
   blur: ->
