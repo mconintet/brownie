@@ -294,11 +294,20 @@ module.exports.Layer = class Layer
 
   drawing: ->
 
+  applyParentMask: ->
+    p = @parent
+    if p? and p.byCanvasPosition?
+      @ctx.rect p.byCanvasPosition.x, p.byCanvasPosition.y, p.frame.size.width, p.frame.size.height
+      @ctx.clip()
+
   draw: (fire = true) ->
     if @ctx is null
       return this
 
     @ctx.save()
+
+    if @maskToBounds
+      @applyParentMask()
 
     @_drawPredefined()
     @drawing()
