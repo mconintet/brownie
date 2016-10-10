@@ -333,6 +333,12 @@ module.exports.Layer = class Layer
     else
       @off 'mousedown', @focus
 
+  enableFocus: (enable = true) ->
+    if enable
+      @on 'mousedown', @focus
+    else
+      @off 'mousedown', @focus
+
   resize: (nw, nh) ->
     @frame.size.width = nw
     @frame.size.height = nh
