@@ -58,6 +58,8 @@ module.exports.Layer = class Layer
     @handlerEnable = false
     @handlerOpenTrigger = 'click'
 
+    @extraExportableProperties = []
+
   exportableProperties: ->
     [
       'class',
@@ -74,7 +76,7 @@ module.exports.Layer = class Layer
       'moveDelta',
       'handlerEnable',
       'handlerOpenTrigger'
-    ]
+    ].concat @exportableProperties()
 
   export: ->
     ret = {
