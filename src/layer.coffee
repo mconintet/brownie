@@ -261,7 +261,9 @@ module.exports.Layer = class Layer
     @capturedTransform = @ctx.getTransform()
 
   _drawPredefined: ->
-    @ctx.beginPath()
+
+    if @maskToBounds
+      @applyParentMask()
 
     @_applyTransform()
 
@@ -287,9 +289,6 @@ module.exports.Layer = class Layer
       @ctx.shadowColor = "#1B93F1"
       @ctx.shadowBlur = 20 * Canvas.devicePixelRatio
 
-    if @maskToBounds
-      @ctx.clip()
-
     @ctx.closePath()
 
   drawing: ->
@@ -297,8 +296,11 @@ module.exports.Layer = class Layer
   applyParentMask: ->
     p = @parent
     if p? and p.byCanvasPosition?
+      t = @ctx.getTransform().clone()
+      @ctx.setTransformWithMatrix p.capturedTransform
       @ctx.rect p.byCanvasPosition.x, p.byCanvasPosition.y, p.frame.size.width, p.frame.size.height
       @ctx.clip()
+      @ctx.setTransformWithMatrix t
 
   draw: (fire = true) ->
     if @ctx is null
@@ -306,10 +308,8 @@ module.exports.Layer = class Layer
 
     @ctx.save()
 
-    if @maskToBounds
-      @applyParentMask()
-
     @_drawPredefined()
+
     @drawing()
 
     @ctx.restore()
