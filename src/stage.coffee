@@ -141,7 +141,7 @@ module.exports.Stage = class Stage
   broadcastMouseEvent: (evt) ->
     fulfilled = []
     fulfilledZIndexed = []
-    @walkLayers (layer) ->
+    @walkLayers (layer) =>
       if not layer.isHidden and layer.containPoint evt.x, evt.y
         if layer.zIndex is 0
           fulfilled.push layer
