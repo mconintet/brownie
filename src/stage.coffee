@@ -147,6 +147,8 @@ module.exports.Stage = class Stage
           fulfilled.push layer
         else
           fulfilledZIndexed.push layer
+      else if layer is @focusingLayer
+        layer.blur()
 
     fulfilled.sort (a, b) ->
       b.addedIndex - a.addedIndex
