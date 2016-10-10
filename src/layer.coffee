@@ -76,7 +76,7 @@ module.exports.Layer = class Layer
       'moveDelta',
       'handlerEnable',
       'handlerOpenTrigger'
-    ].concat @exportableProperties()
+    ].concat @extraExportableProperties
 
   export: ->
     ret = {
