@@ -60,6 +60,8 @@ module.exports.Layer = class Layer
 
     @extraExportableProperties = []
 
+    @extraData = {}
+
   exportableProperties: ->
     [
       'class',
@@ -75,7 +77,8 @@ module.exports.Layer = class Layer
       'draggable',
       'moveDelta',
       'handlerEnable',
-      'handlerOpenTrigger'
+      'handlerOpenTrigger',
+      'extraData',
     ].concat @extraExportableProperties
 
   export: ->
