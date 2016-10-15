@@ -27,6 +27,8 @@ module.exports.Stage = class Stage
 
     @stopRedraw = false
 
+    @afterDrewCb = []
+
   handleHistoryChanged: (forward = true) ->
     changes = @history.currentChanges()
     changes?.forEach (change) =>
@@ -166,34 +168,36 @@ module.exports.Stage = class Stage
     false
 
   _draw: (cb) ->
-    drawing = 0
-    fire = ->
-      cb?() if drawing is 0
+    allDrew = true
+    fire = =>
+      if allDrew is true
+        for fn in @afterDrewCb
+          fn()
+        cb?()
+        @afterDrewCb = []
+      else
+        @afterDrewCb.push(cb) if cb?
 
     zIndexed = []
     @walkLayers (layer) =>
-      drawing++
       layer.stage = this
       layer.addedIndex = @indexGenerator.auto() if layer.addedIndex is -1
       layer.ctx = @canvas.ctx
       if layer.zIndex > 0
         zIndexed.push layer
       else
-        layer.on 'afterDraw', ->
-          drawing--
-          fire()
         layer.draw()
+        if not layer.isDrew
+          allDrew = false
 
     if zIndexed.length > 0
       zIndexed.sort (a, b) ->
         return a.zIndex - b.zIndex
 
       zIndexed.forEach (layer) ->
-        drawing++
-        layer.on 'afterDraw', ->
-          drawing--
-          fire()
         layer.draw()
+        if not layer.isDrew
+          allDrew = false
 
       @maxZIndex = zIndexed[zIndexed.length - 1].zIndex
 

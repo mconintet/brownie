@@ -25,6 +25,8 @@ module.exports.Image = class Image extends Layer
 
     @autoFireAfterDraw = false
 
+    @isDrew = false
+
   preventSrcFromCache: (src) ->
     if !Url.regOnline.test(src)
       lo = window.location
@@ -74,7 +76,7 @@ module.exports.Image = class Image extends Layer
     @redraw() if @imageLoaded
 
   draw: ->
-    super(false)
+    super()
 
   _drawPredefined: ->
     super()

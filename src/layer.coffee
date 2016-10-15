@@ -64,6 +64,8 @@ module.exports.Layer = class Layer
 
     @autoFireAfterDraw = true
 
+    @isDrew = false
+
   exportableProperties: ->
     [
       'class',
@@ -322,6 +324,7 @@ module.exports.Layer = class Layer
     return this
 
   fireDrew: ->
+    @isDrew = true
     @fire 'afterDraw'
 
   redraw: ->
