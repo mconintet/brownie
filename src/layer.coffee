@@ -62,6 +62,8 @@ module.exports.Layer = class Layer
 
     @extraData = {}
 
+    @autoFireAfterDraw = true
+
   exportableProperties: ->
     [
       'class',
@@ -304,7 +306,7 @@ module.exports.Layer = class Layer
       @ctx.clip()
       @ctx.setTransformWithMatrix t
 
-  draw: (fire = true) ->
+  draw: () ->
     if @ctx is null
       return this
 
@@ -316,7 +318,7 @@ module.exports.Layer = class Layer
 
     @ctx.restore()
 
-    @fireDrew() if fire
+    @fireDrew() if @autoFireAfterDraw
     return this
 
   fireDrew: ->

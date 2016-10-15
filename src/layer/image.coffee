@@ -23,6 +23,8 @@ module.exports.Image = class Image extends Layer
 
     @backgroundColor = null
 
+    @autoFireAfterDraw = false
+
   preventSrcFromCache: (src) ->
     if !Url.regOnline.test(src)
       lo = window.location
