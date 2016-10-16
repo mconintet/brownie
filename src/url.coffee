@@ -43,7 +43,7 @@ module.exports.Url = class Url
   @parseSearch: (search) ->
     ret = {}
     for kv in search.split('&')
-      [k,v] = kv.split(',')
+      [k,v] = kv.split('=')
       if k? and v?
         ret[decodeURIComponent(k)] = decodeURIComponent(v)
     ret
