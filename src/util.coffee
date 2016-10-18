@@ -72,7 +72,7 @@ module.exports.Util = class Util
     if @isArray target
       ret = []
       for v in target
-        ret.push @clone(v)
+        ret.push @oClone(v)
       ret
     else if @isObject target
       @oExtend {}, target
