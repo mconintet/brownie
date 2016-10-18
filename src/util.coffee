@@ -69,13 +69,13 @@ module.exports.Util = class Util
     ret
 
   @oClone: (target) ->
-    if @isObject target
-      @oExtend {}, target
-    else if @isArray target
+    if @isArray target
       ret = []
       for v in target
         ret.push @clone(v)
       ret
+    else if @isObject target
+      @oExtend {}, target
     else
       target
 
