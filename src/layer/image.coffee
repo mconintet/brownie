@@ -6,7 +6,7 @@ Url = require('../url').Url
 _Image = window.Image
 
 module.exports.Image = class Image extends Layer
-  constructor: (x, y, width, height, @src = '', @sx = 0, @sy = 0, @sWidth = 0, @sHeight = 0) ->
+  constructor: (x, y, width, height, @src = '', @isDataUrl = false, @sx = 0, @sy = 0, @sWidth = 0, @sHeight = 0) ->
     super(x, y, width, height)
 
     @class = 'brownie.ImageLayer'
@@ -17,7 +17,10 @@ module.exports.Image = class Image extends Layer
     @image.onload = =>
       @onImageLoaded()
 
-    @image.src = @preventSrcFromCache(@src) if @src isnt ''
+    if not @isDataUrl
+      @image.src = @preventSrcFromCache(@src) if @src isnt ''
+    else
+      @image.src = @src
 
     @imageLoaded = false
 
