@@ -68,9 +68,11 @@ module.exports.Layer = class Layer
 
   exportableProperties: ->
     [
+      'id',
       'class',
       'zIndex',
       'frame',
+      'byWindowPosition',
       'maskToBounds',
       'rotate',
       'borderWidth',
@@ -206,12 +208,14 @@ module.exports.Layer = class Layer
     @stage.focusingLayer = this
     @focusing = true
     @redraw()
+    @fire 'focus'
 
   blur: ->
     if @stage.focusingLayer is @
       @stage.focusingLayer = null
       @focusing = false
       @redraw()
+      @fire 'blur'
 
   moveTo: (x, y) ->
     @moveDelta.x = x
@@ -267,7 +271,6 @@ module.exports.Layer = class Layer
     @capturedTransform = @ctx.getTransform()
 
   _drawPredefined: ->
-
     if @maskToBounds
       @applyParentMask()
 

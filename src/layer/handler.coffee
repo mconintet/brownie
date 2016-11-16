@@ -85,6 +85,7 @@ module.exports.Handler = class Handler
         p = new Point(@layer.moveDelta.x + dx, @layer.moveDelta.y + dy)
         @layer.backupAttr 'moveDelta', p
         @layer.move dx, dy
+        @layer.syncByWindowPosition()
 
   _prepareBtnDelete: ->
     @btnDelete = @container.find('i.delete')
