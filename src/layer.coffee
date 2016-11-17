@@ -132,6 +132,9 @@ module.exports.Layer = class Layer
     @moveDelta.x *= rate
     @moveDelta.y *= rate
 
+    @byWindowPosition.x *= rate
+    @byWindowPosition.y *= rate
+
   enableHandler: (@handlerEnable = true) ->
     if @handlerEnable
       @focusable = true if not @focusable
