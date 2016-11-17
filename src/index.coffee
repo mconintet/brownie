@@ -1,7 +1,7 @@
 module.exports.IndexGenerator = class IndexGenerator
-  constructor: (@seed = 0) ->
+  constructor: (@seed = new Date().getTime()) ->
 
   auto: ->
     return @seed++
 
-  reset: (@seed = 0) ->
+  reset: (@seed = new Date().getTime()) ->
