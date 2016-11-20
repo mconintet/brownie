@@ -36,30 +36,46 @@ module.exports.Handler = class Handler
 
   enableMove: (yn = yes) ->
     if yn
-      @container.find('i.move').show()
+      @container.find('i.move').css {
+        display: 'block'
+      }
     else
-      @container.find('i.move').hide()
+      @container.find('i.move').css {
+        display: 'none'
+      }
     @
 
   enableDelete: (yn = yes) ->
     if yn
-      @container.find('i.delete').show()
+      @container.find('i.delete').css {
+        display: 'block'
+      }
     else
-      @container.find('i.delete').hide()
+      @container.find('i.delete').css {
+        display: 'none'
+      }
     @
 
   enableRotate: (yn = yes) ->
     if yn
-      @container.find('i.rotate').show()
+      @container.find('i.rotate').css {
+        display: 'block'
+      }
     else
-      @container.find('i.rotate').hide()
+      @container.find('i.rotate').css {
+        display: 'none'
+      }
     @
 
   enableResize: (yn = yes) ->
     if yn
-      @container.find('i.resize').show()
+      @container.find('i.resize').css {
+        display: 'block'
+      }
     else
-      @container.find('i.resize').hide()
+      @container.find('i.resize').css {
+        display: 'none'
+      }
     @
 
   _prepareBtnMove: ->
