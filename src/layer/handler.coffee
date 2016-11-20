@@ -34,6 +34,34 @@ module.exports.Handler = class Handler
       border: '1px solid #000'
     }
 
+  enableMove: (yn = yes) ->
+    if yn
+      @container.find('i.move').show()
+    else
+      @container.find('i.move').hide()
+    @
+
+  enableDelete: (yn = yes) ->
+    if yn
+      @container.find('i.delete').show()
+    else
+      @container.find('i.delete').hide()
+    @
+
+  enableRotate: (yn = yes) ->
+    if yn
+      @container.find('i.rotate').show()
+    else
+      @container.find('i.rotate').hide()
+    @
+
+  enableResize: (yn = yes) ->
+    if yn
+      @container.find('i.resize').show()
+    else
+      @container.find('i.resize').hide()
+    @
+
   _prepareBtnMove: ->
     @btnMove = @container.find('i.move')
     @btnMove.css {
