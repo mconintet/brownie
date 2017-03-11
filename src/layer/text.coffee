@@ -175,6 +175,8 @@ module.exports.Text = class Text extends Layer
         if @text is ''
           @textChanged = false
           range = document.createRange()
+          if range.selectNodeContents textarea.firstChild
+            return
           range.selectNodeContents textarea.firstChild
           sel = getSelection()
           sel.removeAllRanges()
